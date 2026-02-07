@@ -17,34 +17,35 @@ const plans = [
     price: "$0",
     period: "forever",
     validations: "3/month",
-    features: ["3 validations/month", "1 saved spec", "Basic validation"],
+    features: ["3 validations/month", "1 saved spec", "Basic matching"],
   },
   {
-    id: "starter" as const,
-    name: "Starter",
-    price: "$99",
+    id: "professional" as const,
+    name: "Professional",
+    price: "$149",
     period: "/month",
-    validations: "50/month",
+    validations: "75/month",
     features: [
-      "50 validations/month",
+      "75 validations/month",
       "Unlimited saved specs",
+      "Dual-pass verification",
       "PDF export",
       "Email support",
     ],
     popular: true,
   },
   {
-    id: "pro" as const,
-    name: "Pro",
-    price: "$199",
+    id: "business" as const,
+    name: "Business",
+    price: "$299",
     period: "/month",
     validations: "Unlimited",
     features: [
       "Unlimited validations",
-      "Unlimited saved specs",
-      "PDF export",
+      "Everything in Professional",
+      "Team seats (5)",
       "Priority support",
-      "API access (coming soon)",
+      "API access",
     ],
   },
 ];
@@ -84,7 +85,7 @@ function BillingContent() {
     load();
   }, [supabase]);
 
-  async function handleUpgrade(plan: "starter" | "pro") {
+  async function handleUpgrade(plan: "professional" | "business") {
     setCheckoutLoading(plan);
 
     try {
@@ -199,7 +200,7 @@ function BillingContent() {
                   <Button
                     className="w-full"
                     variant={plan.popular ? "accent" : "default"}
-                    onClick={() => handleUpgrade(plan.id as "starter" | "pro")}
+                    onClick={() => handleUpgrade(plan.id as "professional" | "business")}
                     disabled={checkoutLoading !== null}
                   >
                     {checkoutLoading === plan.id ? (

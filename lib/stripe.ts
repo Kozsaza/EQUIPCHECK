@@ -5,29 +5,30 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export const PLANS = {
-  starter: {
-    name: "Starter",
-    price: "$99/mo",
-    priceId: process.env.STRIPE_STARTER_PRICE_ID!,
-    validations: 50,
+  professional: {
+    name: "Professional",
+    price: "$149/mo",
+    priceId: process.env.STRIPE_PROFESSIONAL_PRICE_ID!,
+    validations: 75,
     features: [
-      "50 validations/month",
+      "75 validations/month",
       "Unlimited saved specs",
+      "Dual-pass verification",
       "PDF export",
       "Email support",
     ],
   },
-  pro: {
-    name: "Pro",
-    price: "$199/mo",
-    priceId: process.env.STRIPE_PRO_PRICE_ID!,
+  business: {
+    name: "Business",
+    price: "$299/mo",
+    priceId: process.env.STRIPE_BUSINESS_PRICE_ID!,
     validations: Infinity,
     features: [
       "Unlimited validations",
-      "Unlimited saved specs",
-      "PDF export",
+      "Everything in Professional",
+      "Team seats (5)",
       "Priority support",
-      "API access (coming soon)",
+      "API access",
     ],
   },
 } as const;

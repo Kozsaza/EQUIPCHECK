@@ -67,7 +67,7 @@ Return ONLY valid JSON (no markdown, no explanation) in this exact structure:
 }
 
 ## Rules
-- Be thorough but reasonable with matching (e.g., "Cisco 4321" should match "CISCO-4321-K9")
+- Be thorough but reasonable with matching (e.g., "Square D QO120" should match "SQD-QO120-CP")
 - Quantity mismatches are always flagged
 - If unsure about a match, mark as partial match with notes
 - validation_status is PASS only if zero mismatches and zero missing items

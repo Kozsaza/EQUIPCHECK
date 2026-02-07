@@ -15,11 +15,11 @@ export async function POST(request: Request) {
 
   const { plan: rawPlan } = await request.json();
 
-  if (rawPlan !== "starter" && rawPlan !== "pro") {
+  if (rawPlan !== "professional" && rawPlan !== "business") {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
 
-  const plan: "starter" | "pro" = rawPlan;
+  const plan: "professional" | "business" = rawPlan;
 
   const { data: profile } = await supabase
     .from("profiles")

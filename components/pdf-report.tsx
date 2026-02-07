@@ -24,12 +24,12 @@ export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps
 
       const styles = StyleSheet.create({
         page: { padding: 40, fontSize: 10, fontFamily: "Helvetica", backgroundColor: "#FFFFFF" },
-        header: { fontSize: 20, marginBottom: 4, fontFamily: "Helvetica-Bold", color: "#1E3A5F" },
+        header: { fontSize: 20, marginBottom: 4, fontFamily: "Helvetica-Bold", color: "#0F172A" },
         subheader: { fontSize: 12, color: "#94A3B8", marginBottom: 20 },
         sectionTitle: {
           fontSize: 14,
           fontFamily: "Helvetica-Bold",
-          color: "#1E3A5F",
+          color: "#0F172A",
           marginTop: 16,
           marginBottom: 8,
           borderBottomWidth: 1,
@@ -61,11 +61,11 @@ export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps
         tableHeader: {
           flexDirection: "row",
           borderBottomWidth: 1,
-          borderBottomColor: "#1E3A5F",
+          borderBottomColor: "#0F172A",
           paddingBottom: 4,
           marginBottom: 4,
           fontFamily: "Helvetica-Bold",
-          color: "#1E3A5F",
+          color: "#0F172A",
           fontSize: 9,
         },
         col1: { width: "30%" },

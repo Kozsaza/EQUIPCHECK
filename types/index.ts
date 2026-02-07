@@ -2,7 +2,7 @@ export interface Profile {
   id: string;
   email: string;
   stripe_customer_id: string | null;
-  plan: "free" | "starter" | "pro";
+  plan: "free" | "professional" | "business";
   validations_this_month: number;
   validation_reset_date: string | null;
   created_at: string;
@@ -83,12 +83,12 @@ export interface ValidationResult {
 
 export const PLAN_LIMITS: Record<Profile["plan"], number> = {
   free: 3,
-  starter: 50,
-  pro: Infinity,
+  professional: 75,
+  business: Infinity,
 };
 
 export const PLAN_SPEC_LIMITS: Record<Profile["plan"], number> = {
   free: 1,
-  starter: Infinity,
-  pro: Infinity,
+  professional: Infinity,
+  business: Infinity,
 };
