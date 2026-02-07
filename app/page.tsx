@@ -769,24 +769,33 @@ const securityPoints = [
   {
     icon: Lock,
     title: "Zero Data Retention",
-    body: "Your equipment lists and specs are processed in memory and purged immediately. We never store your proprietary data.",
+    body: "Your equipment lists and specs are processed in memory and purged immediately after validation. We never store, cache, or log your proprietary data. Period.",
   },
   {
     icon: ShieldCheck,
     title: "End-to-End Encryption",
-    body: "Files are encrypted during upload, processing, and delivery. Your data is never accessible to our team.",
+    body: "TLS encryption protects your files during upload, processing, and delivery. Your data is never accessible to our team or any third party.",
   },
   {
     icon: FileText,
     title: "Your Files, Your Property",
-    body: "You own everything you upload. We provide the validation engine. That\u2019s it. No data mining, no analytics on your content.",
+    body: "You own everything you upload. We provide the validation engine. That\u2019s it. No data mining, no training on your content, no analytics on your documents.",
   },
+];
+
+const trustBadges = [
+  "SOC 2 aligned security practices",
+  "No third-party data sharing",
+  "GDPR-ready data handling",
+  "Files purged after processing",
+  "No AI training on your data",
+  "Encrypted at rest and in transit",
 ];
 
 function SecuritySection() {
   return (
     <section
-      className="bg-[#0F172A] px-4 py-20 sm:px-6"
+      className="bg-[#0F172A] px-4 py-24 sm:px-6"
       style={{
         backgroundImage:
           "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)",
@@ -794,25 +803,52 @@ function SecuritySection() {
       }}
     >
       <div className="mx-auto max-w-7xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
-          Your Data. Your Business.
-        </p>
-        <h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">
-          We validate your files. We don&rsquo;t keep them.
-        </h2>
+        {/* Header with shield accent */}
+        <div className="flex items-start gap-4">
+          <div className="hidden rounded-xl bg-blue-500/10 p-3 sm:block">
+            <ShieldCheck className="h-8 w-8 text-blue-400" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+              Your Data. Your Business.
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">
+              We validate your files. We don&rsquo;t keep them.
+            </h2>
+            <p className="mt-4 max-w-2xl text-lg text-slate-400">
+              Your BOMs, specs, and equipment lists contain proprietary pricing, vendor
+              relationships, and project details. We built EquipCheck so none of that
+              data ever leaves your control.
+            </p>
+          </div>
+        </div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-3">
+        {/* Security cards */}
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
           {securityPoints.map((sp) => (
-            <div key={sp.title} className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/10">
+            <div
+              key={sp.title}
+              className="rounded-xl border border-white/10 bg-white/5 p-6 transition-all hover:border-blue-500/30 hover:bg-white/[0.07]"
+            >
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10">
                 <sp.icon className="h-5 w-5 text-blue-400" />
               </div>
-              <div>
-                <h3 className="font-display text-lg font-bold text-white">{sp.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-400">{sp.body}</p>
-              </div>
+              <h3 className="font-display text-lg font-bold text-white">{sp.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">{sp.body}</p>
             </div>
           ))}
+        </div>
+
+        {/* Trust badges grid */}
+        <div className="mt-12 rounded-xl border border-white/10 bg-white/5 p-6">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {trustBadges.map((badge) => (
+              <div key={badge} className="flex items-center gap-2.5">
+                <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+                <span className="text-sm text-slate-300">{badge}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
