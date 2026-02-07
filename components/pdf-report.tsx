@@ -23,39 +23,50 @@ export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps
       );
 
       const styles = StyleSheet.create({
-        page: { padding: 40, fontSize: 10, fontFamily: "Helvetica" },
-        header: { fontSize: 20, marginBottom: 4, fontFamily: "Helvetica-Bold" },
-        subheader: { fontSize: 12, color: "#666", marginBottom: 20 },
+        page: { padding: 40, fontSize: 10, fontFamily: "Helvetica", backgroundColor: "#FFFFFF" },
+        header: { fontSize: 20, marginBottom: 4, fontFamily: "Helvetica-Bold", color: "#1E3A5F" },
+        subheader: { fontSize: 12, color: "#94A3B8", marginBottom: 20 },
         sectionTitle: {
           fontSize: 14,
           fontFamily: "Helvetica-Bold",
+          color: "#1E3A5F",
           marginTop: 16,
           marginBottom: 8,
           borderBottomWidth: 1,
-          borderBottomColor: "#ddd",
+          borderBottomColor: "#E2E8F0",
           paddingBottom: 4,
         },
-        statusPass: { color: "#16a34a", fontSize: 16, fontFamily: "Helvetica-Bold" },
-        statusFail: { color: "#dc2626", fontSize: 16, fontFamily: "Helvetica-Bold" },
-        statusReview: { color: "#ca8a04", fontSize: 16, fontFamily: "Helvetica-Bold" },
+        statusPass: { color: "#16A34A", fontSize: 16, fontFamily: "Helvetica-Bold" },
+        statusFail: { color: "#DC2626", fontSize: 16, fontFamily: "Helvetica-Bold" },
+        statusReview: { color: "#D97706", fontSize: 16, fontFamily: "Helvetica-Bold" },
         statsRow: {
           flexDirection: "row",
           justifyContent: "space-between",
           marginBottom: 4,
+          color: "#475569",
         },
         tableRow: {
           flexDirection: "row",
           borderBottomWidth: 0.5,
-          borderBottomColor: "#eee",
+          borderBottomColor: "#F1F5F9",
           paddingVertical: 4,
+        },
+        tableRowAlt: {
+          flexDirection: "row",
+          borderBottomWidth: 0.5,
+          borderBottomColor: "#F1F5F9",
+          paddingVertical: 4,
+          backgroundColor: "#F8FAFC",
         },
         tableHeader: {
           flexDirection: "row",
           borderBottomWidth: 1,
-          borderBottomColor: "#333",
+          borderBottomColor: "#1E3A5F",
           paddingBottom: 4,
           marginBottom: 4,
           fontFamily: "Helvetica-Bold",
+          color: "#1E3A5F",
+          fontSize: 9,
         },
         col1: { width: "30%" },
         col2: { width: "30%" },
@@ -67,7 +78,7 @@ export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps
           left: 40,
           right: 40,
           fontSize: 8,
-          color: "#999",
+          color: "#94A3B8",
           textAlign: "center",
         },
       });
@@ -120,7 +131,7 @@ export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps
                   <Text style={styles.col4}>Notes</Text>
                 </View>
                 {matches.map((m, i) => (
-                  <View key={i} style={styles.tableRow}>
+                  <View key={i} style={i % 2 === 1 ? styles.tableRowAlt : styles.tableRow}>
                     <Text style={styles.col1}>{m.equipment_item}</Text>
                     <Text style={styles.col2}>{m.spec_item}</Text>
                     <Text style={styles.col3}>
@@ -142,7 +153,7 @@ export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps
                   <Text style={styles.col4}>Values</Text>
                 </View>
                 {mismatches.map((m, i) => (
-                  <View key={i} style={styles.tableRow}>
+                  <View key={i} style={i % 2 === 1 ? styles.tableRowAlt : styles.tableRow}>
                     <Text style={styles.col1}>{m.equipment_item}</Text>
                     <Text style={styles.col2}>{m.spec_item}</Text>
                     <Text style={styles.col3}>{m.issue}</Text>
@@ -160,7 +171,7 @@ export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps
                   Missing Items ({missing_from_equipment.length})
                 </Text>
                 {missing_from_equipment.map((m, i) => (
-                  <View key={i} style={styles.tableRow}>
+                  <View key={i} style={i % 2 === 1 ? styles.tableRowAlt : styles.tableRow}>
                     <Text style={styles.col1}>{m.spec_item}</Text>
                     <Text style={styles.col3}>Qty: {m.spec_qty}</Text>
                     <Text style={styles.col4}>{m.notes}</Text>
@@ -175,7 +186,7 @@ export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps
                   Extra Items ({extra_in_equipment.length})
                 </Text>
                 {extra_in_equipment.map((m, i) => (
-                  <View key={i} style={styles.tableRow}>
+                  <View key={i} style={i % 2 === 1 ? styles.tableRowAlt : styles.tableRow}>
                     <Text style={styles.col1}>{m.equipment_item}</Text>
                     <Text style={styles.col3}>Qty: {m.equipment_qty}</Text>
                     <Text style={styles.col4}>{m.notes}</Text>

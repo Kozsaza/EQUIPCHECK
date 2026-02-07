@@ -114,7 +114,7 @@ export default function SpecDetailPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Edit Spec</h1>
+        <h1 className="text-2xl font-semibold text-primary">Edit Spec</h1>
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="destructive" size="sm">

@@ -112,14 +112,14 @@ function BillingContent() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Billing</h1>
-        <p className="mt-1 text-muted-foreground">
+        <h1 className="text-2xl font-semibold text-primary">Billing</h1>
+        <p className="mt-1 text-secondary">
           Manage your subscription and usage
         </p>
       </div>
 
       {success && (
-        <Alert>
+        <Alert variant="success">
           <AlertDescription>
             Subscription activated successfully! Your plan has been updated.
           </AlertDescription>
@@ -127,7 +127,7 @@ function BillingContent() {
       )}
 
       {canceled && (
-        <Alert>
+        <Alert variant="warning">
           <AlertDescription>
             Checkout was canceled. No changes were made to your plan.
           </AlertDescription>
@@ -135,21 +135,21 @@ function BillingContent() {
       )}
 
       {/* Current Usage */}
-      <Card>
+      <Card className="gap-3">
         <CardHeader>
           <CardTitle>Current Usage</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-8">
             <div>
-              <p className="text-sm text-muted-foreground">Current Plan</p>
-              <Badge variant="secondary" className="mt-1">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Current Plan</p>
+              <Badge variant="secondary" className="mt-1.5">
                 {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}
               </Badge>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Validations This Month</p>
-              <p className="font-medium">{profile?.validations_this_month ?? 0}</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Validations This Month</p>
+              <p className="mt-1 text-lg font-semibold text-primary">{profile?.validations_this_month ?? 0}</p>
             </div>
           </div>
         </CardContent>
@@ -162,26 +162,26 @@ function BillingContent() {
           return (
             <Card
               key={plan.id}
-              className={plan.popular ? "border-primary shadow-md" : ""}
+              className={plan.popular ? "border-accent shadow-md" : ""}
             >
               <CardHeader>
                 {plan.popular && (
-                  <Badge className="mb-2 w-fit">Most Popular</Badge>
+                  <Badge className="mb-2 w-fit bg-accent text-accent-foreground">Most Popular</Badge>
                 )}
                 <CardTitle>{plan.name}</CardTitle>
                 <CardDescription>
-                  <span className="text-3xl font-bold text-foreground">
+                  <span className="text-3xl font-bold text-primary">
                     {plan.price}
                   </span>
-                  <span className="text-muted-foreground">{plan.period}</span>
+                  <span className="text-secondary">{plan.period}</span>
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
+                <ul className="space-y-2.5">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      {feature}
+                      <Check className="h-4 w-4 text-accent" />
+                      <span className="text-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -198,6 +198,7 @@ function BillingContent() {
                 ) : (
                   <Button
                     className="w-full"
+                    variant={plan.popular ? "accent" : "default"}
                     onClick={() => handleUpgrade(plan.id as "starter" | "pro")}
                     disabled={checkoutLoading !== null}
                   >

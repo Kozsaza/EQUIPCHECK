@@ -45,50 +45,48 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="mt-1 text-muted-foreground">
+        <h1 className="text-2xl font-semibold text-primary">Dashboard</h1>
+        <p className="mt-1 text-secondary">
           Welcome back, {user.email}
         </p>
       </div>
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Validations Used</CardTitle>
-            <FileCheck className="h-4 w-4 text-muted-foreground" />
+        <Card className="gap-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Validations Used</CardTitle>
+            <FileCheck className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-primary">
               {used} / {limit === Infinity ? "Unlimited" : limit}
             </div>
-            <p className="text-xs text-muted-foreground">
-              <Badge variant="secondary" className="mt-1">
-                {plan.charAt(0).toUpperCase() + plan.slice(1)} plan
-              </Badge>
-            </p>
+            <Badge variant="secondary" className="mt-1">
+              {plan.charAt(0).toUpperCase() + plan.slice(1)} plan
+            </Badge>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Saved Specs</CardTitle>
-            <FolderOpen className="h-4 w-4 text-muted-foreground" />
+        <Card className="gap-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Saved Specs</CardTitle>
+            <FolderOpen className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{specCount ?? 0}</div>
-            <p className="text-xs text-muted-foreground">Master specifications</p>
+            <div className="text-2xl font-bold text-primary">{specCount ?? 0}</div>
+            <p className="mt-1 text-xs text-muted-foreground">Master specifications</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Validations</CardTitle>
-            <History className="h-4 w-4 text-muted-foreground" />
+        <Card className="gap-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Validations</CardTitle>
+            <History className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{validationCount ?? 0}</div>
-            <p className="text-xs text-muted-foreground">All time</p>
+            <div className="text-2xl font-bold text-primary">{validationCount ?? 0}</div>
+            <p className="mt-1 text-xs text-muted-foreground">All time</p>
           </CardContent>
         </Card>
       </div>
@@ -119,10 +117,10 @@ export default async function DashboardPage() {
                   <Link
                     key={v.id}
                     href={`/dashboard/history/${v.id}`}
-                    className="flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted/50"
+                    className="flex items-center justify-between rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50"
                   >
                     <div>
-                      <p className="font-medium">{v.spec_name}</p>
+                      <p className="font-medium text-foreground">{v.spec_name}</p>
                       <p className="text-sm text-muted-foreground">
                         {v.equipment_filename ?? "Equipment list"} &middot;{" "}
                         {new Date(v.created_at).toLocaleDateString()}
@@ -131,10 +129,10 @@ export default async function DashboardPage() {
                     <Badge
                       variant={
                         status === "PASS"
-                          ? "default"
+                          ? "success"
                           : status === "FAIL"
                             ? "destructive"
-                            : "secondary"
+                            : "warning"
                       }
                     >
                       {status}
@@ -146,7 +144,7 @@ export default async function DashboardPage() {
           ) : (
             <p className="text-sm text-muted-foreground">
               No validations yet.{" "}
-              <Link href="/dashboard/validate" className="text-primary underline-offset-4 hover:underline">
+              <Link href="/dashboard/validate" className="text-accent underline-offset-4 hover:underline">
                 Run your first one
               </Link>
             </p>

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { History } from "lucide-react";
 
@@ -19,8 +19,8 @@ export default async function HistoryPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Validation History</h1>
-        <p className="mt-1 text-muted-foreground">
+        <h1 className="text-2xl font-semibold text-primary">Validation History</h1>
+        <p className="mt-1 text-secondary">
           All your past equipment validations
         </p>
       </div>
@@ -32,10 +32,10 @@ export default async function HistoryPage() {
             const status = result?.summary?.validation_status ?? "UNKNOWN";
             return (
               <Link key={v.id} href={`/dashboard/history/${v.id}`}>
-                <Card className="transition-shadow hover:shadow-md">
+                <Card className="transition-all hover:shadow-md hover:border-accent/30">
                   <CardContent className="flex items-center justify-between py-4">
                     <div>
-                      <p className="font-medium">{v.spec_name}</p>
+                      <p className="font-medium text-foreground">{v.spec_name}</p>
                       <p className="text-sm text-muted-foreground">
                         {v.equipment_filename ?? "Equipment list"} &middot;{" "}
                         {new Date(v.created_at).toLocaleDateString()} at{" "}
@@ -50,10 +50,10 @@ export default async function HistoryPage() {
                     <Badge
                       variant={
                         status === "PASS"
-                          ? "default"
+                          ? "success"
                           : status === "FAIL"
                             ? "destructive"
-                            : "secondary"
+                            : "warning"
                       }
                     >
                       {status}
@@ -66,11 +66,13 @@ export default async function HistoryPage() {
         </div>
       ) : (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <History className="mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 className="mb-1 text-lg font-medium">No validations yet</h3>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+              <History className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <h3 className="mb-1 text-lg font-medium text-foreground">No validations yet</h3>
             <p className="text-sm text-muted-foreground">
-              <Link href="/dashboard/validate" className="text-primary underline-offset-4 hover:underline">
+              <Link href="/dashboard/validate" className="text-accent underline-offset-4 hover:underline">
                 Run your first validation
               </Link>
             </p>

@@ -60,12 +60,14 @@ export function FileUpload({
 
   if (selectedFile) {
     return (
-      <div className="flex items-center justify-between rounded-lg border bg-muted/30 p-4">
+      <div className="flex items-center justify-between rounded-xl border border-border bg-card p-4">
         <div className="flex items-center gap-3">
-          <FileSpreadsheet className="h-8 w-8 text-primary" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+            <FileSpreadsheet className="h-5 w-5 text-accent" />
+          </div>
           <div>
-            <p className="font-medium">{selectedFile.name}</p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm font-medium text-foreground">{selectedFile.name}</p>
+            <p className="text-xs text-muted-foreground">
               {(selectedFile.size / 1024).toFixed(1)} KB
             </p>
           </div>
@@ -82,19 +84,21 @@ export function FileUpload({
   return (
     <div
       className={cn(
-        "relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors",
+        "relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-10 transition-colors",
         dragActive
-          ? "border-primary bg-primary/5"
-          : "border-muted-foreground/25 hover:border-primary/50"
+          ? "border-accent bg-accent/5"
+          : "border-muted-foreground/25 hover:border-accent/50"
       )}
       onDragEnter={handleDrag}
       onDragLeave={handleDrag}
       onDragOver={handleDrag}
       onDrop={handleDrop}
     >
-      <Upload className="mb-3 h-10 w-10 text-muted-foreground" />
-      <p className="mb-1 text-sm font-medium">{label}</p>
-      <p className="mb-3 text-xs text-muted-foreground">{description}</p>
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+        <Upload className="h-5 w-5 text-muted-foreground" />
+      </div>
+      <p className="mb-1 text-sm font-medium text-foreground">{label}</p>
+      <p className="mb-4 text-xs text-muted-foreground">{description}</p>
       <label>
         <input
           type="file"

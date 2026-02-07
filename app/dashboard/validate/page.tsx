@@ -117,8 +117,8 @@ export default function ValidatePage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">New Validation</h1>
-        <p className="mt-1 text-muted-foreground">
+        <h1 className="text-2xl font-semibold text-primary">New Validation</h1>
+        <p className="mt-1 text-secondary">
           Select a spec and upload your equipment list to validate
         </p>
       </div>
@@ -152,7 +152,7 @@ export default function ValidatePage() {
           ) : (
             <p className="text-sm text-muted-foreground">
               No specs found.{" "}
-              <a href="/dashboard/specs/new" className="text-primary underline-offset-4 hover:underline">
+              <a href="/dashboard/specs/new" className="text-accent underline-offset-4 hover:underline">
                 Upload one first
               </a>
             </p>
@@ -160,7 +160,7 @@ export default function ValidatePage() {
 
           {selectedSpec && (
             <div className="mt-4">
-              <p className="mb-2 text-sm font-medium text-muted-foreground">
+              <p className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Spec preview ({(selectedSpec.content as Record<string, unknown>[]).length} items)
               </p>
               <SpecPreview
@@ -194,7 +194,7 @@ export default function ValidatePage() {
           )}
           {equipmentData && (
             <div className="mt-4">
-              <p className="mb-2 text-sm font-medium text-muted-foreground">
+              <p className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Equipment preview ({equipmentData.length} items)
               </p>
               <SpecPreview data={equipmentData} maxRows={5} />

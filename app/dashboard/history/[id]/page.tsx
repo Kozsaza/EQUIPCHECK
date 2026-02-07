@@ -55,8 +55,8 @@ export default function ValidationDetailPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{validation.spec_name}</h1>
-          <p className="mt-1 text-muted-foreground">
+          <h1 className="text-2xl font-semibold text-primary">{validation.spec_name}</h1>
+          <p className="mt-1 text-secondary">
             {validation.equipment_filename ?? "Equipment list"} &middot;{" "}
             {new Date(validation.created_at).toLocaleDateString()} at{" "}
             {new Date(validation.created_at).toLocaleTimeString()}

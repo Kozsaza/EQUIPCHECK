@@ -97,8 +97,8 @@ export default function NewSpecPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Upload New Spec</h1>
-        <p className="mt-1 text-muted-foreground">
+        <h1 className="text-2xl font-semibold text-primary">Upload New Spec</h1>
+        <p className="mt-1 text-secondary">
           Upload a CSV or Excel file as a master specification
         </p>
       </div>

@@ -82,18 +82,18 @@ const plans = [
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       {/* Nav */}
-      <header className="border-b">
+      <header className="border-b border-border bg-card">
         <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <Link href="/" className="text-xl font-bold">
+          <Link href="/" className="text-xl font-semibold text-primary">
             EquipCheck
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Button variant="ghost" asChild>
               <Link href="/login">Sign In</Link>
             </Button>
-            <Button asChild>
+            <Button variant="accent" asChild>
               <Link href="/signup">Get Started</Link>
             </Button>
           </div>
@@ -101,22 +101,22 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="border-b bg-muted/30 px-4 py-20 md:py-32">
+      <section className="border-b border-border px-4 py-20 md:py-32">
         <div className="container mx-auto max-w-4xl text-center">
-          <Badge variant="secondary" className="mb-4">
+          <Badge variant="secondary" className="mb-6">
             AI-Powered Equipment Validation
           </Badge>
-          <h1 className="text-4xl font-bold tracking-tight md:text-6xl">
+          <h1 className="text-4xl font-semibold tracking-tight text-primary md:text-6xl">
             Validate equipment lists{" "}
-            <span className="text-primary">in minutes, not hours</span>
+            <span className="text-accent">in minutes, not hours</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-secondary">
             Upload your equipment list and master spec. Our AI compares them
             line-by-line, flags mismatches, identifies missing items, and
             generates a professional report.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button size="lg" asChild>
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <Button size="lg" variant="accent" asChild>
               <Link href="/signup">
                 Start Validating Free
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -135,40 +135,38 @@ export default function LandingPage() {
       {/* Problem / Solution */}
       <section className="px-4 py-20">
         <div className="container mx-auto max-w-6xl">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-semibold text-primary">
               Stop manually comparing spreadsheets
             </h2>
-            <p className="mt-3 text-lg text-muted-foreground">
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-secondary">
               Field service teams waste hours cross-checking equipment lists
               against project specs. EquipCheck automates the entire process.
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {features.map((feature) => (
-              <Card key={feature.title} className="border-0 shadow-none">
-                <CardContent className="pt-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                    <feature.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="mb-2 font-semibold">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
+              <div key={feature.title}>
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
+                  <feature.icon className="h-6 w-6 text-accent" />
+                </div>
+                <h3 className="mb-2 font-semibold text-foreground">{feature.title}</h3>
+                <p className="text-sm leading-relaxed text-secondary">
+                  {feature.description}
+                </p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="border-y bg-muted/30 px-4 py-20">
+      <section className="border-y border-border bg-muted/60 px-4 py-20">
         <div className="container mx-auto max-w-4xl">
-          <h2 className="mb-12 text-center text-3xl font-bold">
+          <h2 className="mb-16 text-center text-3xl font-semibold text-primary">
             How it works
           </h2>
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-12 md:grid-cols-3">
             {[
               {
                 step: "1",
@@ -187,11 +185,11 @@ export default function LandingPage() {
               },
             ].map((item) => (
               <div key={item.step} className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
+                <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-lg font-semibold text-accent-foreground">
                   {item.step}
                 </div>
-                <h3 className="mb-2 font-semibold">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
+                <h3 className="mb-2 font-semibold text-foreground">{item.title}</h3>
+                <p className="text-sm leading-relaxed text-secondary">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -201,8 +199,8 @@ export default function LandingPage() {
       {/* Built For */}
       <section className="px-4 py-20">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="mb-4 text-3xl font-bold">Built for field service teams</h2>
-          <p className="mb-8 text-lg text-muted-foreground">
+          <h2 className="mb-4 text-3xl font-semibold text-primary">Built for field service teams</h2>
+          <p className="mb-10 text-lg text-secondary">
             Telecom contractors, IT integrators, MSPs, and low-voltage
             installers trust EquipCheck to catch errors before they become
             costly mistakes.
@@ -216,9 +214,9 @@ export default function LandingPage() {
               "Save specs for recurring project types",
               "Track validation history for compliance",
             ].map((item) => (
-              <div key={item} className="flex items-center gap-2">
-                <Shield className="h-4 w-4 shrink-0 text-primary" />
-                <span className="text-sm">{item}</span>
+              <div key={item} className="flex items-center gap-3 rounded-xl bg-card p-4 border border-border shadow-sm">
+                <Shield className="h-4 w-4 shrink-0 text-accent" />
+                <span className="text-sm font-medium text-foreground">{item}</span>
               </div>
             ))}
           </div>
@@ -226,11 +224,11 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="border-t bg-muted/30 px-4 py-20">
+      <section id="pricing" className="border-t border-border bg-muted/60 px-4 py-20">
         <div className="container mx-auto max-w-6xl">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold">Simple, transparent pricing</h2>
-            <p className="mt-3 text-lg text-muted-foreground">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-semibold text-primary">Simple, transparent pricing</h2>
+            <p className="mt-4 text-lg text-secondary">
               Start free. Upgrade when you need more.
             </p>
           </div>
@@ -238,25 +236,25 @@ export default function LandingPage() {
             {plans.map((plan) => (
               <Card
                 key={plan.name}
-                className={plan.popular ? "border-primary shadow-lg" : ""}
+                className={plan.popular ? "border-accent shadow-lg relative" : ""}
               >
                 <CardHeader>
                   {plan.popular && (
-                    <Badge className="mb-2 w-fit">Most Popular</Badge>
+                    <Badge className="mb-2 w-fit bg-accent text-accent-foreground">Most Popular</Badge>
                   )}
-                  <CardTitle>{plan.name}</CardTitle>
+                  <CardTitle className="text-lg">{plan.name}</CardTitle>
                   <CardDescription>{plan.description}</CardDescription>
                   <div className="pt-2">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    <span className="text-muted-foreground">{plan.period}</span>
+                    <span className="text-4xl font-bold text-primary">{plan.price}</span>
+                    <span className="text-secondary">{plan.period}</span>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2">
+                  <ul className="space-y-3">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-center gap-2 text-sm">
-                        <Check className="h-4 w-4 text-primary" />
-                        {feature}
+                        <Check className="h-4 w-4 text-accent" />
+                        <span className="text-foreground">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -264,7 +262,7 @@ export default function LandingPage() {
                 <CardFooter>
                   <Button
                     className="w-full"
-                    variant={plan.popular ? "default" : "outline"}
+                    variant={plan.popular ? "accent" : "outline"}
                     asChild
                   >
                     <Link href="/signup">{plan.cta}</Link>
@@ -279,14 +277,14 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="px-4 py-20">
         <div className="container mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold">
+          <h2 className="text-3xl font-semibold text-primary">
             Ready to stop checking spreadsheets by hand?
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-4 text-lg text-secondary">
             Create your free account and run your first validation in under 5
             minutes.
           </p>
-          <Button size="lg" className="mt-8" asChild>
+          <Button size="lg" variant="accent" className="mt-10" asChild>
             <Link href="/signup">
               Get Started Free
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -296,7 +294,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t px-4 py-8">
+      <footer className="border-t border-border bg-card px-4 py-8">
         <div className="container mx-auto max-w-6xl text-center text-sm text-muted-foreground">
           &copy; {new Date().getFullYear()} EquipCheck. All rights reserved.
         </div>

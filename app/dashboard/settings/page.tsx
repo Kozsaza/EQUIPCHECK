@@ -64,8 +64,8 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="mt-1 text-muted-foreground">Manage your account</p>
+        <h1 className="text-2xl font-semibold text-primary">Settings</h1>
+        <p className="mt-1 text-secondary">Manage your account</p>
       </div>
 
       <Card>
@@ -111,7 +111,7 @@ export default function SettingsPage() {
 
       <Separator />
 
-      <Card className="border-destructive">
+      <Card className="border-destructive/30">
         <CardHeader>
           <CardTitle className="text-destructive">Danger Zone</CardTitle>
           <CardDescription>

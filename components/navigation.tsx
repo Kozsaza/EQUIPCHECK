@@ -43,10 +43,10 @@ export function Navigation() {
     <>
       {/* Mobile toggle */}
       <button
-        className="fixed top-4 left-4 z-50 rounded-md border bg-background p-2 md:hidden"
+        className="fixed top-4 left-4 z-50 rounded-lg border border-border bg-card p-2 shadow-sm md:hidden"
         onClick={() => setMobileOpen(!mobileOpen)}
       >
-        {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        {mobileOpen ? <X className="h-5 w-5 text-foreground" /> : <Menu className="h-5 w-5 text-foreground" />}
       </button>
 
       {/* Overlay */}
@@ -60,12 +60,12 @@ export function Navigation() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 flex h-full w-64 flex-col border-r bg-background transition-transform md:translate-x-0",
+          "fixed left-0 top-0 z-40 flex h-full w-64 flex-col bg-sidebar transition-transform md:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex h-16 items-center border-b px-6">
-          <Link href="/dashboard" className="text-xl font-bold">
+        <div className="flex h-16 items-center border-b border-sidebar-border px-6">
+          <Link href="/dashboard" className="text-xl font-semibold text-white">
             EquipCheck
           </Link>
         </div>
@@ -82,10 +82,10 @@ export function Navigation() {
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-white/15 text-white"
+                    : "text-sidebar-foreground hover:bg-white/10 hover:text-white"
                 )}
               >
                 <item.icon className="h-4 w-4" />
@@ -95,10 +95,10 @@ export function Navigation() {
           })}
         </nav>
 
-        <div className="border-t p-3">
+        <div className="border-t border-sidebar-border p-3">
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 text-muted-foreground"
+            className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-white/10 hover:text-white"
             onClick={handleLogout}
           >
             <LogOut className="h-4 w-4" />

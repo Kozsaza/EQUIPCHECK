@@ -26,13 +26,13 @@ export function SpecPreview({ data, maxRows = 10 }: SpecPreviewProps) {
 
   return (
     <div className="space-y-2">
-      <div className="rounded-md border">
+      <div className="rounded-xl border border-border bg-card">
         <div className="max-h-96 overflow-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 {columns.map((col) => (
-                  <TableHead key={col} className="whitespace-nowrap">
+                  <TableHead key={col}>
                     {col}
                   </TableHead>
                 ))}
@@ -42,7 +42,7 @@ export function SpecPreview({ data, maxRows = 10 }: SpecPreviewProps) {
               {rows.map((row, i) => (
                 <TableRow key={i}>
                   {columns.map((col) => (
-                    <TableCell key={col} className="whitespace-nowrap">
+                    <TableCell key={col} className="font-mono text-xs">
                       {String(row[col] ?? "")}
                     </TableCell>
                   ))}
