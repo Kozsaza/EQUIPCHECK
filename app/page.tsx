@@ -41,6 +41,9 @@ function LandingNav() {
           <a href="#industries" className="text-sm text-slate-300 transition-colors hover:text-white">
             Industries
           </a>
+          <a href="#security" className="text-sm text-slate-300 transition-colors hover:text-white">
+            Security
+          </a>
           <a href="#pricing" className="text-sm text-slate-300 transition-colors hover:text-white">
             Pricing
           </a>
@@ -69,6 +72,7 @@ function LandingNav() {
           <nav className="flex flex-col gap-3">
             <a href="#how-it-works" onClick={() => setMobileOpen(false)} className="text-sm text-slate-300 hover:text-white">How It Works</a>
             <a href="#industries" onClick={() => setMobileOpen(false)} className="text-sm text-slate-300 hover:text-white">Industries</a>
+            <a href="#security" onClick={() => setMobileOpen(false)} className="text-sm text-slate-300 hover:text-white">Security</a>
             <a href="#pricing" onClick={() => setMobileOpen(false)} className="text-sm text-slate-300 hover:text-white">Pricing</a>
             <Link href="/login" className="text-sm text-slate-300 hover:text-white">Sign In</Link>
             <Button asChild className="w-full bg-gradient-to-br from-blue-600 to-blue-500 text-white">
@@ -141,8 +145,8 @@ function HeroSection() {
 /* ──────────────────────────── SECTION 3: SOCIAL PROOF BAR ──────────────────────────── */
 
 const stats = [
-  { value: "$200–500", label: "Average cost of one failed truck roll" },
-  { value: "15–45", label: "Minutes saved per manual equipment check" },
+  { value: "$200\u2013500", label: "Average cost of one failed truck roll" },
+  { value: "15\u201345", label: "Minutes saved per manual equipment check" },
   { value: "92%", label: "Reduction in validation errors" },
   { value: "< 2 min", label: "Average validation time" },
 ];
@@ -167,215 +171,7 @@ function SocialProofSection() {
   );
 }
 
-/* ──────────────────────────── SECTION 4: THE PROBLEM ──────────────────────────── */
-
-const problems = [
-  {
-    icon: RotateCcw,
-    color: "border-l-red-500",
-    title: "Failed Truck Rolls",
-    cost: "$200\u2013500 per incident",
-    body: "Wrong or missing equipment means your crew drives back empty-handed. At $65\u201385/hr fully loaded, that\u2019s money burned on zero productivity.",
-  },
-  {
-    icon: Clock,
-    color: "border-l-amber-500",
-    title: "Manual Verification",
-    cost: "15\u201345 minutes per check",
-    body: "Someone on your team is eyeballing spreadsheets line by line before every job. At 50 jobs per month, that\u2019s 12\u201337 hours of skilled labor spent on data entry.",
-  },
-  {
-    icon: ClipboardX,
-    color: "border-l-violet-500",
-    title: "Undetected Errors",
-    cost: "5\u201312% of jobs affected",
-    body: "Industry data shows 1 in 10 jobs ships with a material discrepancy. Most aren\u2019t caught until the crew is already on site.",
-  },
-];
-
-function ProblemSection() {
-  return (
-    <section className="px-4 py-20 sm:px-6">
-      <div className="mx-auto max-w-7xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">
-          The Problem
-        </p>
-        <h2 className="mt-3 font-display text-3xl font-bold text-slate-900 sm:text-4xl">
-          Equipment errors are silently draining your budget
-        </h2>
-        <p className="mt-4 max-w-2xl text-lg text-slate-600">
-          Every field service company deals with it&mdash;wrong parts on the truck,
-          quantity mismatches caught too late, specs that don&rsquo;t match the job
-          requirements. Each error means wasted labor, return trips, project delays,
-          and frustrated crews.
-        </p>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {problems.map((p) => (
-            <div
-              key={p.title}
-              className={`rounded-xl border border-slate-200 border-l-4 ${p.color} bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] transition-all hover:-translate-y-0.5 hover:shadow-md`}
-            >
-              <p.icon className="mb-4 h-6 w-6 text-slate-700" />
-              <h3 className="font-display text-lg font-bold text-slate-900">{p.title}</h3>
-              <p className="mt-1 text-sm font-semibold text-slate-500">{p.cost}</p>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">{p.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ──────────────────────────── SECTION 5: HOW IT WORKS ──────────────────────────── */
-
-const steps = [
-  {
-    num: "01",
-    title: "Upload Your Master Spec",
-    body: "Import your standard specifications, BOM templates, or approved equipment lists. Save them to your library for one-click reuse on every future job. Supports CSV and Excel.",
-  },
-  {
-    num: "02",
-    title: "Upload Your Equipment List",
-    body: "Drop in the equipment list for today\u2019s job\u2014a material order, pull sheet, or vendor quote. EquipCheck parses it automatically, regardless of format.",
-  },
-  {
-    num: "03",
-    title: "Get Your Validation Report",
-    body: "AI compares every line item across both documents. You get a color-coded report showing matches, mismatches, missing items, and quantity errors\u2014exportable as PDF for your records.",
-  },
-];
-
-function HowItWorksSection() {
-  return (
-    <section
-      id="how-it-works"
-      className="relative bg-[#0F172A] px-4 py-20 sm:px-6"
-      style={{
-        backgroundImage:
-          "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
-        backgroundSize: "40px 40px",
-      }}
-    >
-      <div className="mx-auto max-w-7xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
-          How It Works
-        </p>
-        <h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">
-          Three steps. Two minutes. Zero errors on the truck.
-        </h2>
-
-        <div className="mt-14 grid gap-8 md:grid-cols-3">
-          {steps.map((s) => (
-            <div key={s.num} className="rounded-xl border border-white/10 bg-white/5 p-8">
-              <span className="font-display text-5xl font-extrabold text-blue-400/30">
-                {s.num}
-              </span>
-              <h3 className="mt-4 font-display text-xl font-bold text-white">{s.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-slate-400">{s.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ──────────────────────────── SECTION 6: DUAL-PASS ACCURACY ──────────────────────────── */
-
-const accuracyPoints = [
-  "Pass 1: Intelligent matching across different naming conventions",
-  "Pass 2: Self-verification catches AI errors before you see them",
-  "Confidence scoring: every match rated HIGH, MEDIUM, or REVIEW_NEEDED",
-  "Conservative by design: uncertain items flagged for human review, never assumed correct",
-  "No data retention: your files are processed and purged, never stored",
-];
-
-function DualPassSection() {
-  return (
-    <section className="px-4 py-20 sm:px-6">
-      <div className="mx-auto max-w-7xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">
-          Built for Accuracy
-        </p>
-        <h2 className="mt-3 font-display text-3xl font-bold text-slate-900 sm:text-4xl">
-          Dual-pass AI verification. Not a glorified VLOOKUP.
-        </h2>
-        <p className="mt-4 max-w-2xl text-lg text-slate-600">
-          EquipCheck doesn&rsquo;t just match strings. Our dual-pass system validates
-          every item twice&mdash;first for identification, then for verification&mdash;so
-          you can trust the results before your crew loads the truck.
-        </p>
-
-        <div className="mt-12 grid items-start gap-12 lg:grid-cols-2">
-          {/* Left: feature list */}
-          <div className="space-y-4">
-            <h3 className="font-display text-lg font-bold text-slate-900">
-              How our AI is different
-            </h3>
-            {accuracyPoints.map((point) => (
-              <div key={point} className="flex items-start gap-3">
-                <Check className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
-                <span className="text-sm leading-relaxed text-slate-700">{point}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Right: visual flow */}
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-8">
-            <div className="space-y-4">
-              {/* Input */}
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700">
-                  Equipment List
-                </div>
-                <span className="text-slate-400">+</span>
-                <div className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700">
-                  Master Spec
-                </div>
-              </div>
-
-              {/* Arrow */}
-              <div className="flex justify-center">
-                <div className="h-8 w-px bg-blue-400" />
-              </div>
-
-              {/* Pass 1 */}
-              <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3">
-                <p className="text-sm font-semibold text-blue-800">Pass 1: Validation Engine</p>
-                <p className="text-xs text-blue-600">Structured comparison &amp; matching</p>
-              </div>
-
-              <div className="flex justify-center">
-                <div className="h-8 w-px bg-blue-400" />
-              </div>
-
-              {/* Pass 2 */}
-              <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3">
-                <p className="text-sm font-semibold text-blue-800">Pass 2: Verification Engine</p>
-                <p className="text-xs text-blue-600">Error checking &amp; confidence scoring</p>
-              </div>
-
-              <div className="flex justify-center">
-                <div className="h-8 w-px bg-emerald-400" />
-              </div>
-
-              {/* Output */}
-              <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
-                <p className="text-sm font-semibold text-emerald-800">Verified Report</p>
-                <p className="text-xs text-emerald-600">Download PDF &bull; Color-coded results</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ──────────────────────────── SECTION 7: INDUSTRY USE CASES ──────────────────────────── */
+/* ──────────────────────────── SECTION 4: INDUSTRY USE CASES ──────────────────────────── */
 
 const industries = [
   {
@@ -406,7 +202,7 @@ const industries = [
 
 function IndustrySection() {
   return (
-    <section id="industries" className="border-y border-slate-200 bg-slate-50 px-4 py-20 sm:px-6">
+    <section id="industries" className="px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-7xl">
         <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">
           Built for Your Industry
@@ -442,7 +238,68 @@ function IndustrySection() {
   );
 }
 
-/* ──────────────────────────── SECTION 8: ROI CALCULATOR ──────────────────────────── */
+/* ──────────────────────────── SECTION 5: THE PROBLEM ──────────────────────────── */
+
+const problems = [
+  {
+    icon: RotateCcw,
+    color: "border-l-red-500",
+    title: "Failed Truck Rolls",
+    cost: "$200\u2013500 per incident",
+    body: "Wrong or missing equipment means your crew drives back empty-handed. At $65\u201385/hr fully loaded, that\u2019s money burned on zero productivity.",
+  },
+  {
+    icon: Clock,
+    color: "border-l-amber-500",
+    title: "Manual Verification",
+    cost: "15\u201345 minutes per check",
+    body: "Someone on your team is eyeballing spreadsheets line by line before every job. At 50 jobs per month, that\u2019s 12\u201337 hours of skilled labor spent on data entry.",
+  },
+  {
+    icon: ClipboardX,
+    color: "border-l-violet-500",
+    title: "Undetected Errors",
+    cost: "5\u201312% of jobs affected",
+    body: "Industry data shows 1 in 10 jobs ships with a material discrepancy. Most aren\u2019t caught until the crew is already on site.",
+  },
+];
+
+function ProblemSection() {
+  return (
+    <section className="border-y border-slate-200 bg-slate-50 px-4 py-20 sm:px-6">
+      <div className="mx-auto max-w-7xl">
+        <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">
+          The Problem
+        </p>
+        <h2 className="mt-3 font-display text-3xl font-bold text-slate-900 sm:text-4xl">
+          Equipment errors are silently draining your budget
+        </h2>
+        <p className="mt-4 max-w-2xl text-lg text-slate-600">
+          Every field service company deals with it&mdash;wrong parts on the truck,
+          quantity mismatches caught too late, specs that don&rsquo;t match the job
+          requirements. Each error means wasted labor, return trips, project delays,
+          and frustrated crews.
+        </p>
+
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {problems.map((p) => (
+            <div
+              key={p.title}
+              className={`rounded-xl border border-slate-200 border-l-4 ${p.color} bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] transition-all hover:-translate-y-0.5 hover:shadow-md`}
+            >
+              <p.icon className="mb-4 h-6 w-6 text-slate-700" />
+              <h3 className="font-display text-lg font-bold text-slate-900">{p.title}</h3>
+              <p className="mt-1 text-sm font-semibold text-slate-500">{p.cost}</p>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600">{p.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────── SECTION 6: ROI CALCULATOR ──────────────────────────── */
 
 function ROISection() {
   const [jobsPerMonth, setJobsPerMonth] = useState(50);
@@ -624,6 +481,174 @@ function CalcRow({
   );
 }
 
+/* ──────────────────────────── SECTION 7: HOW IT WORKS ──────────────────────────── */
+
+const steps = [
+  {
+    num: "01",
+    title: "Upload Your Master Spec",
+    body: "Import your standard specifications, BOM templates, or approved equipment lists. Save them to your library for one-click reuse on every future job. Supports CSV and Excel.",
+  },
+  {
+    num: "02",
+    title: "Upload Your Equipment List",
+    body: "Drop in the equipment list for today\u2019s job\u2014a material order, pull sheet, or vendor quote. EquipCheck parses it automatically, regardless of format.",
+  },
+  {
+    num: "03",
+    title: "Get Your Validation Report",
+    body: "AI compares every line item across both documents. You get a color-coded report showing matches, mismatches, missing items, and quantity errors\u2014exportable as PDF for your records.",
+  },
+];
+
+function HowItWorksSection() {
+  return (
+    <section
+      id="how-it-works"
+      className="relative bg-[#0F172A] px-4 py-20 sm:px-6"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+        backgroundSize: "40px 40px",
+      }}
+    >
+      <div className="mx-auto max-w-7xl">
+        <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+          How It Works
+        </p>
+        <h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">
+          Three steps. Two minutes. Zero errors on the truck.
+        </h2>
+
+        <div className="mt-14 grid gap-8 md:grid-cols-3">
+          {steps.map((s) => (
+            <div key={s.num} className="rounded-xl border border-white/10 bg-white/5 p-8">
+              <span className="font-display text-5xl font-extrabold text-blue-400/30">
+                {s.num}
+              </span>
+              <h3 className="mt-4 font-display text-xl font-bold text-white">{s.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-slate-400">{s.body}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Dual-pass callout — folded into How It Works */}
+        <div className="mt-12 rounded-xl border border-blue-500/20 bg-blue-500/5 p-6 sm:p-8">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-blue-500/10">
+              <ShieldCheck className="h-6 w-6 text-blue-400" />
+            </div>
+            <div>
+              <h3 className="font-display text-lg font-bold text-white">
+                Dual-pass AI verification &mdash; not a glorified VLOOKUP
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                Every validation runs through two AI passes: first for intelligent matching
+                across naming conventions, then a self-verification pass that catches errors
+                before you see them. Uncertain items get flagged for human review &mdash; never
+                assumed correct.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────── SECTION 8: DATA SECURITY ──────────────────────────── */
+
+const securityPoints = [
+  {
+    icon: Lock,
+    title: "Zero Data Retention",
+    body: "Your equipment lists and specs are processed in memory and purged immediately after validation. We never store, cache, or log your proprietary data. Period.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "End-to-End Encryption",
+    body: "TLS encryption protects your files during upload, processing, and delivery. Your data is never accessible to our team or any third party.",
+  },
+  {
+    icon: FileText,
+    title: "Your Files, Your Property",
+    body: "You own everything you upload. We provide the validation engine. That\u2019s it. No data mining, no training on your content, no analytics on your documents.",
+  },
+];
+
+const trustBadges = [
+  "SOC 2 aligned security practices",
+  "No third-party data sharing",
+  "GDPR-ready data handling",
+  "Files purged after processing",
+  "No AI training on your data",
+  "Encrypted at rest and in transit",
+];
+
+function SecuritySection() {
+  return (
+    <section
+      id="security"
+      className="bg-[#0F172A] px-4 py-24 sm:px-6"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)",
+        backgroundSize: "20px 20px",
+      }}
+    >
+      <div className="mx-auto max-w-7xl">
+        {/* Header with shield accent */}
+        <div className="flex items-start gap-4">
+          <div className="hidden rounded-xl bg-blue-500/10 p-3 sm:block">
+            <ShieldCheck className="h-8 w-8 text-blue-400" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+              Your Data. Your Business.
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">
+              We validate your files. We don&rsquo;t keep them.
+            </h2>
+            <p className="mt-4 max-w-2xl text-lg text-slate-400">
+              Your BOMs, specs, and equipment lists contain proprietary pricing, vendor
+              relationships, and project details. We built EquipCheck so none of that
+              data ever leaves your control.
+            </p>
+          </div>
+        </div>
+
+        {/* Security cards */}
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
+          {securityPoints.map((sp) => (
+            <div
+              key={sp.title}
+              className="rounded-xl border border-white/10 bg-white/5 p-6 transition-all hover:border-blue-500/30 hover:bg-white/[0.07]"
+            >
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10">
+                <sp.icon className="h-5 w-5 text-blue-400" />
+              </div>
+              <h3 className="font-display text-lg font-bold text-white">{sp.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">{sp.body}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Trust badges grid */}
+        <div className="mt-12 rounded-xl border border-white/10 bg-white/5 p-6">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {trustBadges.map((badge) => (
+              <div key={badge} className="flex items-center gap-2.5">
+                <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+                <span className="text-sm text-slate-300">{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ──────────────────────────── SECTION 9: PRICING ──────────────────────────── */
 
 const plans = [
@@ -763,99 +788,7 @@ function PricingSection() {
   );
 }
 
-/* ──────────────────────────── SECTION 10: DATA SECURITY ──────────────────────────── */
-
-const securityPoints = [
-  {
-    icon: Lock,
-    title: "Zero Data Retention",
-    body: "Your equipment lists and specs are processed in memory and purged immediately after validation. We never store, cache, or log your proprietary data. Period.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "End-to-End Encryption",
-    body: "TLS encryption protects your files during upload, processing, and delivery. Your data is never accessible to our team or any third party.",
-  },
-  {
-    icon: FileText,
-    title: "Your Files, Your Property",
-    body: "You own everything you upload. We provide the validation engine. That\u2019s it. No data mining, no training on your content, no analytics on your documents.",
-  },
-];
-
-const trustBadges = [
-  "SOC 2 aligned security practices",
-  "No third-party data sharing",
-  "GDPR-ready data handling",
-  "Files purged after processing",
-  "No AI training on your data",
-  "Encrypted at rest and in transit",
-];
-
-function SecuritySection() {
-  return (
-    <section
-      className="bg-[#0F172A] px-4 py-24 sm:px-6"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)",
-        backgroundSize: "20px 20px",
-      }}
-    >
-      <div className="mx-auto max-w-7xl">
-        {/* Header with shield accent */}
-        <div className="flex items-start gap-4">
-          <div className="hidden rounded-xl bg-blue-500/10 p-3 sm:block">
-            <ShieldCheck className="h-8 w-8 text-blue-400" />
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
-              Your Data. Your Business.
-            </p>
-            <h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">
-              We validate your files. We don&rsquo;t keep them.
-            </h2>
-            <p className="mt-4 max-w-2xl text-lg text-slate-400">
-              Your BOMs, specs, and equipment lists contain proprietary pricing, vendor
-              relationships, and project details. We built EquipCheck so none of that
-              data ever leaves your control.
-            </p>
-          </div>
-        </div>
-
-        {/* Security cards */}
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {securityPoints.map((sp) => (
-            <div
-              key={sp.title}
-              className="rounded-xl border border-white/10 bg-white/5 p-6 transition-all hover:border-blue-500/30 hover:bg-white/[0.07]"
-            >
-              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10">
-                <sp.icon className="h-5 w-5 text-blue-400" />
-              </div>
-              <h3 className="font-display text-lg font-bold text-white">{sp.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-400">{sp.body}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Trust badges grid */}
-        <div className="mt-12 rounded-xl border border-white/10 bg-white/5 p-6">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {trustBadges.map((badge) => (
-              <div key={badge} className="flex items-center gap-2.5">
-                <Check className="h-4 w-4 shrink-0 text-emerald-400" />
-                <span className="text-sm text-slate-300">{badge}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ──────────────────────────── SECTION 11: CTA ──────────────────────────── */
+/* ──────────────────────────── SECTION 10: CTA ──────────────────────────── */
 
 function CTASection() {
   return (
@@ -882,7 +815,7 @@ function CTASection() {
   );
 }
 
-/* ──────────────────────────── SECTION 12: FOOTER ──────────────────────────── */
+/* ──────────────────────────── SECTION 11: FOOTER ──────────────────────────── */
 
 function Footer() {
   return (
@@ -944,13 +877,12 @@ export default function LandingPage() {
       <LandingNav />
       <HeroSection />
       <SocialProofSection />
-      <ProblemSection />
-      <HowItWorksSection />
-      <DualPassSection />
       <IndustrySection />
+      <ProblemSection />
       <ROISection />
-      <PricingSection />
+      <HowItWorksSection />
       <SecuritySection />
+      <PricingSection />
       <CTASection />
       <Footer />
     </div>
