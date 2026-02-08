@@ -1606,8 +1606,8 @@ function Footer() {
             Company
           </h4>
           <nav className="mt-4 flex flex-col gap-2">
-            <span className="text-sm text-slate-500">About</span>
-            <span className="text-sm text-slate-500">Contact</span>
+            <a href="mailto:hello@equipcheck.io" className="text-sm text-slate-500 hover:text-white">Contact</a>
+            <a href="#security" className="text-sm text-slate-500 hover:text-white">Security</a>
           </nav>
         </div>
         <div>
@@ -1615,8 +1615,8 @@ function Footer() {
             Legal
           </h4>
           <nav className="mt-4 flex flex-col gap-2">
-            <span className="text-sm text-slate-500">Privacy Policy</span>
-            <span className="text-sm text-slate-500">Terms of Service</span>
+            <Link href="/privacy" className="text-sm text-slate-500 hover:text-white">Privacy Policy</Link>
+            <Link href="/terms" className="text-sm text-slate-500 hover:text-white">Terms of Service</Link>
           </nav>
         </div>
       </div>

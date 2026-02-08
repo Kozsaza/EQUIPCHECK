@@ -6,7 +6,7 @@ create table public.profiles (
   id uuid references auth.users on delete cascade primary key,
   email text not null,
   stripe_customer_id text,
-  plan text default 'free' check (plan in ('free', 'starter', 'pro')),
+  plan text default 'free' check (plan in ('free', 'professional', 'business')),
   validations_this_month integer default 0,
   validation_reset_date timestamp with time zone,
   created_at timestamp with time zone default now(),

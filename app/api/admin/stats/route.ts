@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 
-const ADMIN_EMAIL = "admin@test.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@test.com";
 
 export async function GET() {
   const supabase = await createClient();

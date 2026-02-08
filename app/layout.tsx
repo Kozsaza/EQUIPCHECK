@@ -19,6 +19,8 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://equipcheck.io";
+
 export const metadata: Metadata = {
   title: "EquipCheck — AI Equipment Validation for Field Service Teams",
   description:
@@ -32,6 +34,26 @@ export const metadata: Metadata = {
     "spec validation",
     "AI validation",
   ],
+  metadataBase: new URL(baseUrl),
+  openGraph: {
+    title: "EquipCheck — AI Equipment Validation for Field Service Teams",
+    description:
+      "Upload any equipment list against any spec. AI validates every line item in under 2 minutes — catching mismatches, missing parts, and quantity errors.",
+    url: baseUrl,
+    siteName: "EquipCheck",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EquipCheck — AI Equipment Validation",
+    description:
+      "Turn 2-hour manual equipment validation into 2-minute AI-powered checks. Free to start.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
