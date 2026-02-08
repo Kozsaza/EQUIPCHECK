@@ -31,6 +31,7 @@ export async function GET() {
     utmLogsRes,
     specsRes,
     pdfDownloadsRes,
+    allItemsRes,
   ] = await Promise.all([
     // Total demo validations (all time)
     admin
@@ -113,6 +114,12 @@ export async function GET() {
       .from("validation_logs")
       .select("*", { count: "exact", head: true })
       .eq("source", "pdf_download"),
+
+    // Total validated items (for accuracy calculation)
+    admin
+      .from("validation_logs")
+      .select("match_count, mismatch_count, missing_count, extra_count")
+      .neq("source", "pdf_download"),
   ]);
 
   // Get total validations per user for the user table
@@ -219,6 +226,22 @@ export async function GET() {
     user_note: f.user_note,
   }));
 
+  // Accuracy scoring
+  let totalItemsValidated = 0;
+  for (const log of allItemsRes.data ?? []) {
+    totalItemsValidated +=
+      (log.match_count ?? 0) +
+      (log.mismatch_count ?? 0) +
+      (log.missing_count ?? 0) +
+      (log.extra_count ?? 0);
+  }
+  const totalValidations = allItemsRes.data?.length ?? 0;
+  const totalFlags = flagsCountRes.count ?? 0;
+  const accuracyRate =
+    totalItemsValidated > 0
+      ? Math.max(0, ((totalItemsValidated - totalFlags) / totalItemsValidated) * 100)
+      : null;
+
   // UTM breakdown
   const utmBySource: Record<string, number> = {};
   const utmByCampaign: Record<string, number> = {};
@@ -256,9 +279,12 @@ export async function GET() {
     },
     industry_breakdown: industryBreakdown,
     flags: {
-      total: flagsCountRes.count ?? 0,
+      total: totalFlags,
       by_type: flagsByType,
       recent: recentFlags,
+      accuracy_rate: accuracyRate !== null ? +accuracyRate.toFixed(1) : null,
+      total_items_validated: totalItemsValidated,
+      total_validations: totalValidations,
     },
     utm: {
       by_source: Object.entries(utmBySource)

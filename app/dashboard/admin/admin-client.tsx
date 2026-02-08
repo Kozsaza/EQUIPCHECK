@@ -87,6 +87,9 @@ interface FlagsData {
   total: number;
   by_type: Record<string, number>;
   recent: RecentFlag[];
+  accuracy_rate: number | null;
+  total_items_validated: number;
+  total_validations: number;
 }
 
 interface UtmSourceItem {
@@ -692,37 +695,84 @@ const FLAG_COLORS: Record<string, string> = {
 };
 
 function FlagsSection({ flags }: { flags: FlagsData }) {
-  if (flags.total === 0) {
-    return <p className="text-sm text-muted-foreground">No flags submitted yet</p>;
-  }
-
-  const maxTypeCount = Math.max(...Object.values(flags.by_type), 1);
+  const hasFlags = flags.total > 0;
+  const maxTypeCount = hasFlags ? Math.max(...Object.values(flags.by_type), 1) : 1;
 
   return (
     <div className="space-y-6">
-      {/* Type breakdown */}
-      <div>
-        <h4 className="mb-3 text-sm font-medium text-foreground">Flags by Correction Type</h4>
-        <div className="space-y-2">
-          {Object.entries(flags.by_type).map(([type, count]) => {
-            const widthPct = Math.max((count / maxTypeCount) * 100, 4);
-            return (
-              <div key={type} className="space-y-1">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{FLAG_LABELS[type] ?? type}</span>
-                  <span className="font-medium text-foreground">{count}</span>
-                </div>
-                <div className="h-4 w-full overflow-hidden rounded bg-muted">
-                  <div
-                    className={`h-full rounded ${FLAG_COLORS[type] ?? "bg-slate-500"} transition-all`}
-                    style={{ width: `${widthPct}%` }}
-                  />
-                </div>
-              </div>
-            );
-          })}
+      {/* Accuracy score cards */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-lg border border-border p-4 text-center">
+          <div className="text-3xl font-bold text-primary">
+            {flags.accuracy_rate !== null ? `${flags.accuracy_rate}%` : "N/A"}
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">Accuracy Rate</p>
+        </div>
+        <div className="rounded-lg border border-border p-4 text-center">
+          <div className="text-3xl font-bold text-primary">
+            {flags.total_items_validated.toLocaleString()}
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">Items Validated</p>
+        </div>
+        <div className="rounded-lg border border-border p-4 text-center">
+          <div className={`text-3xl font-bold ${flags.total > 0 ? "text-amber-500" : "text-primary"}`}>
+            {flags.total}
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">Items Flagged</p>
         </div>
       </div>
+
+      {/* Accuracy bar */}
+      {flags.accuracy_rate !== null && (
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Overall AI Accuracy</span>
+            <span className="font-medium text-foreground">{flags.accuracy_rate}%</span>
+          </div>
+          <div className="h-4 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className={`h-full rounded-full transition-all ${
+                flags.accuracy_rate >= 95
+                  ? "bg-emerald-500"
+                  : flags.accuracy_rate >= 85
+                    ? "bg-amber-500"
+                    : "bg-rose-500"
+              }`}
+              style={{ width: `${flags.accuracy_rate}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {!hasFlags && (
+        <p className="text-sm text-muted-foreground">No flags submitted yet — accuracy is based on zero reported issues.</p>
+      )}
+
+      {/* Type breakdown */}
+      {hasFlags && (
+        <div>
+          <h4 className="mb-3 text-sm font-medium text-foreground">Flags by Correction Type</h4>
+          <div className="space-y-2">
+            {Object.entries(flags.by_type).map(([type, count]) => {
+              const widthPct = Math.max((count / maxTypeCount) * 100, 4);
+              return (
+                <div key={type} className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">{FLAG_LABELS[type] ?? type}</span>
+                    <span className="font-medium text-foreground">{count}</span>
+                  </div>
+                  <div className="h-4 w-full overflow-hidden rounded bg-muted">
+                    <div
+                      className={`h-full rounded ${FLAG_COLORS[type] ?? "bg-slate-500"} transition-all`}
+                      style={{ width: `${widthPct}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Recent flags table */}
       {flags.recent.length > 0 && (
