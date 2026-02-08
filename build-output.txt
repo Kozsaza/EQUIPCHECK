@@ -1,56 +1,71 @@
 Vercel CLI 50.13.2
 Retrieving project…
 Deploying scalp-health-alliance/equipcheck
-Uploading [--------------------] (0.0B/723.9KB)
-Uploading [=====---------------] (183.4KB/723.9KB)
-Uploading [==========----------] (371.5KB/723.9KB)
-Uploading [===============-----] (547.5KB/723.9KB)
-Uploading [====================] (723.9KB/723.9KB)
-Inspect: https://vercel.com/scalp-health-alliance/equipcheck/7NUVkt1FK8uUaYUnXwbFzJRXfVeK [4s]
-Production: https://equipcheck-q1u7sdetd-scalp-health-alliance.vercel.app [4s]
-https://equipcheck-q1u7sdetd-scalp-health-alliance.vercel.appBuilding...
+Uploading [--------------------] (0.0B/8.6KB)
+Uploading [=====---------------] (2.2KB/8.6KB)
+Uploading [==========----------] (4.5KB/8.6KB)
+Uploading [=================---] (7.7KB/8.6KB)
+Uploading [====================] (8.6KB/8.6KB)
+Inspect: https://vercel.com/scalp-health-alliance/equipcheck/2ka7pry3gnLCJB28tYtxXZqzTbyk [3s]
+Production: https://equipcheck-89p41j5mj-scalp-health-alliance.vercel.app [3s]
+https://equipcheck-89p41j5mj-scalp-health-alliance.vercel.appBuilding...
 Building...
 Building: Running build in Washington, D.C., USA (East) – iad1 (Turbo Build Machine)
 Building: Build machine configuration: 30 cores, 60 GB
 Building: Retrieving list of deployment files...
-Building: Previous build caches not available.
 Building: Downloading 83 deployment files...
+Building: Restored build cache from previous deployment (Hx9h8BkTVzc4hhbyUV6V5XHHwTU2)
 Building: Running "vercel build"
 Building: Vercel CLI 50.11.0
 Building: Installing dependencies...
-Building: npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
-Building: added 775 packages in 10s
+Building: up to date in 1s
 Building: 236 packages are looking for funding
 Building: run `npm fund` for details
 Building: Detected Next.js version: 16.1.6
 Building: Running "npm run build"
 Building: > equipcheck@0.1.0 build
 Building: > next build
-Building: Attention: Next.js now collects completely anonymous telemetry regarding usage.
-Building: This information is used to shape Next.js' roadmap and prioritize features.
-Building: You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-Building: https://nextjs.org/telemetry
 Building: ▲ Next.js 16.1.6 (Turbopack)
 Building: ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
 Building: Creating an optimized production build ...
-Building: ✓ Compiled successfully in 3.3s
+Building: ✓ Compiled successfully in 3.8s
 Building: Running TypeScript ...
 Building: Collecting page data using 29 workers ...
-Building: Error: Neither apiKey nor config.authenticator provided
-Building: at r._setAuthenticator (.next/server/chunks/[root-of-the-server]__f5d81cf9._.js:1:87371)
-Building: at new r (.next/server/chunks/[root-of-the-server]__f5d81cf9._.js:1:81974)
-Building: at module evaluation (.next/server/chunks/[root-of-the-server]__f5d81cf9._.js:1:80883)
-Building: at instantiateModule (.next/server/chunks/[turbopack]_runtime.js:740:9)
-Building: at getOrInstantiateModuleFromParent (.next/server/chunks/[turbopack]_runtime.js:763:12)
-Building: at Context.esmImport [as i] (.next/server/chunks/[turbopack]_runtime.js:228:20)
-Building: at module evaluation (.next/server/chunks/[root-of-the-server]__01eba8cc._.js:1:1268)
-Building: at instantiateModule (.next/server/chunks/[turbopack]_runtime.js:740:9)
-Building: at instantiateRuntimeModule (.next/server/chunks/[turbopack]_runtime.js:768:12)
-Building: at getOrInstantiateRuntimeModule (.next/server/chunks/[turbopack]_runtime.js:781:12)
-Building: > Build error occurred
-Building: Error: Failed to collect page data for /api/create-checkout
-Building: at ignore-listed frames {
-Building: type: 'Error'
-Building: }
-Building: Error: Command "npm run build" exited with 1
-Error: Command "npm run build" exited with 1
+Building: Generating static pages using 29 workers (0/20) ...
+Building: Generating static pages using 29 workers (5/20)
+Building: Generating static pages using 29 workers (10/20)
+Building: Generating static pages using 29 workers (15/20)
+Building: ✓ Generating static pages using 29 workers (20/20) in 576.4ms
+Building: Finalizing page optimization ...
+Building: Route (app)
+Building: ┌ ○ /
+Building: ├ ○ /_not-found
+Building: ├ ƒ /api/create-checkout
+Building: ├ ƒ /api/demo-validate
+Building: ├ ƒ /api/flags
+Building: ├ ƒ /api/link-session
+Building: ├ ƒ /api/validate
+Building: ├ ƒ /api/webhooks/stripe
+Building: ├ ƒ /auth/callback
+Building: ├ ƒ /dashboard
+Building: ├ ○ /dashboard/billing
+Building: ├ ƒ /dashboard/history
+Building: ├ ƒ /dashboard/history/[id]
+Building: ├ ○ /dashboard/settings
+Building: ├ ƒ /dashboard/specs
+Building: ├ ƒ /dashboard/specs/[id]
+Building: ├ ○ /dashboard/specs/new
+Building: ├ ○ /dashboard/validate
+Building: ├ ○ /login
+Building: └ ○ /signup
+Building: ƒ Proxy (Middleware)
+Building: ○  (Static)   prerendered as static content
+Building: ƒ  (Dynamic)  server-rendered on demand
+Building: Traced Next.js server files in: 23.556ms
+Building: Created all serverless functions in: 178.959ms
+Building: Collected static files (public/, static/, .next/static): 3.408ms
+Building: Build Completed in /vercel/output [13s]
+Building: Deploying outputs...
+[2K[1A[2K[GProduction: https://equipcheck-89p41j5mj-scalp-health-alliance.vercel.app [30s]
+Completing...
+Aliased: https://www.equipcheck.app [36s]
