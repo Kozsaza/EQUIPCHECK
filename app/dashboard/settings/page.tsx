@@ -52,13 +52,25 @@ export default function SettingsPage() {
 
   async function handleDeleteAccount() {
     const confirmed = window.confirm(
-      "Are you sure you want to delete your account? This cannot be undone."
+      "Are you sure you want to delete your account? This will permanently delete all your specs, validations, and data. This cannot be undone."
     );
     if (!confirmed) return;
 
-    await supabase.auth.signOut();
-    router.push("/login");
-    toast.success("Signed out. Contact support to complete account deletion.");
+    try {
+      const res = await fetch("/api/delete-account", { method: "DELETE" });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Failed to delete account");
+        return;
+      }
+
+      await supabase.auth.signOut();
+      router.push("/login");
+      toast.success("Account deleted successfully.");
+    } catch {
+      setError("Failed to delete account. Please try again.");
+    }
   }
 
   return (

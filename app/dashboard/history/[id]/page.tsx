@@ -6,30 +6,38 @@ import { createClient } from "@/lib/supabase/client";
 import { ValidationResultView } from "@/components/validation-result";
 import { PdfDownloadButton } from "@/components/pdf-report";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Validation, ValidationResult } from "@/types";
+import type { Validation, ValidationResult, Profile } from "@/types";
 
 export default function ValidationDetailPage() {
   const params = useParams();
   const supabase = createClient();
   const [validation, setValidation] = useState<Validation | null>(null);
+  const [plan, setPlan] = useState<Profile["plan"]>("free");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
-      const { data, error } = await supabase
-        .from("validations")
-        .select("*")
-        .eq("id", params.id as string)
-        .single();
+      const [validationRes, profileRes] = await Promise.all([
+        supabase
+          .from("validations")
+          .select("*")
+          .eq("id", params.id as string)
+          .single(),
+        supabase
+          .from("profiles")
+          .select("plan")
+          .single(),
+      ]);
 
-      if (error || !data) {
+      if (validationRes.error || !validationRes.data) {
         setError("Validation not found");
         setLoading(false);
         return;
       }
 
-      setValidation(data as Validation);
+      setValidation(validationRes.data as Validation);
+      if (profileRes.data) setPlan((profileRes.data.plan ?? "free") as Profile["plan"]);
       setLoading(false);
     }
     load();
@@ -62,7 +70,7 @@ export default function ValidationDetailPage() {
             {new Date(validation.created_at).toLocaleTimeString()}
           </p>
         </div>
-        <PdfDownloadButton validation={validation} result={result} />
+        <PdfDownloadButton validation={validation} result={result} plan={plan} />
       </div>
 
       <ValidationResultView result={result} validationId={validation.id} />

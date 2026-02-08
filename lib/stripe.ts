@@ -39,3 +39,11 @@ export const PLANS = {
     ],
   },
 } as const;
+
+/** Reverse-lookup: given a Stripe price ID, return the plan name */
+export function planFromPriceId(priceId: string): "professional" | "business" | null {
+  for (const [key, plan] of Object.entries(PLANS)) {
+    if (plan.priceId === priceId) return key as "professional" | "business";
+  }
+  return null;
+}

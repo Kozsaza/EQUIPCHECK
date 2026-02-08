@@ -3,14 +3,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
-import type { Validation, ValidationResult } from "@/types";
+import type { Validation, ValidationResult, Profile } from "@/types";
+import { PLAN_FEATURES } from "@/types";
+import Link from "next/link";
 
 interface PdfDownloadButtonProps {
   validation: Validation;
   result: ValidationResult;
+  plan?: Profile["plan"];
 }
 
-export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps) {
+export function PdfDownloadButton({ validation, result, plan = "free" }: PdfDownloadButtonProps) {
   const [generating, setGenerating] = useState(false);
 
   async function handleDownload() {
@@ -223,6 +226,17 @@ export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps
     } finally {
       setGenerating(false);
     }
+  }
+
+  if (!PLAN_FEATURES[plan].pdfExport) {
+    return (
+      <Button variant="outline" asChild>
+        <Link href="/dashboard/billing">
+          <Download className="mr-2 h-4 w-4" />
+          Upgrade to Export PDF
+        </Link>
+      </Button>
+    );
   }
 
   return (
