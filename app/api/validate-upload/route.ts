@@ -6,9 +6,19 @@ import { parseTextInput } from "@/lib/parsers/text";
 
 // Rate limiter: max 3 custom validations per IP per hour
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+let lastCleanup = Date.now();
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
+
+  // Periodic cleanup: purge expired entries every 10 minutes
+  if (now - lastCleanup > 10 * 60 * 1000) {
+    for (const [key, entry] of rateLimitMap) {
+      if (now > entry.resetAt) rateLimitMap.delete(key);
+    }
+    lastCleanup = now;
+  }
+
   const entry = rateLimitMap.get(ip);
 
   if (!entry || now > entry.resetAt) {

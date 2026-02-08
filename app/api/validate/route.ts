@@ -18,13 +18,32 @@ export async function POST(request: Request) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("plan, validations_this_month")
+    .select("plan, validations_this_month, validation_reset_date")
     .eq("id", user.id)
     .single();
 
   const plan = (profile?.plan ?? "free") as Profile["plan"];
   const limit = PLAN_LIMITS[plan];
-  const used = profile?.validations_this_month ?? 0;
+  let used = profile?.validations_this_month ?? 0;
+
+  // Reset monthly counter if past the reset date
+  const resetDate = profile?.validation_reset_date
+    ? new Date(profile.validation_reset_date)
+    : null;
+  const now = new Date();
+
+  if (!resetDate || now >= resetDate) {
+    // Reset counter and set next reset to 1st of next month
+    const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    used = 0;
+    await supabase
+      .from("profiles")
+      .update({
+        validations_this_month: 0,
+        validation_reset_date: nextReset.toISOString(),
+      })
+      .eq("id", user.id);
+  }
 
   if (used >= limit) {
     return NextResponse.json(
@@ -40,6 +59,21 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 }
+    );
+  }
+
+  // Guard against oversized data exceeding AI token limits
+  const MAX_ITEMS = 200;
+  if (Array.isArray(equipmentData) && equipmentData.length > MAX_ITEMS) {
+    return NextResponse.json(
+      { error: `Equipment list too large (${equipmentData.length} items). Maximum is ${MAX_ITEMS} items per validation.` },
+      { status: 413 }
+    );
+  }
+  if (Array.isArray(specData) && specData.length > MAX_ITEMS) {
+    return NextResponse.json(
+      { error: `Spec too large (${specData.length} items). Maximum is ${MAX_ITEMS} items per validation.` },
+      { status: 413 }
     );
   }
 

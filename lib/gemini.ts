@@ -546,11 +546,21 @@ function normalizeToValidationResult(
     validationStatus = "REVIEW_NEEDED";
   }
 
-  // Use Pass 2 value estimate if available, otherwise compute locally
+  // Use Pass 2 value estimate if available, otherwise compute with severity-based pricing
   const errorsCaught = mismatches.length + missingItems.length;
+  let estimatedSavings = 0;
+  if (!pass2ValueEstimate) {
+    const SEVERITY_COST = { CRITICAL: 500, MODERATE: 350, LOW: 150 } as const;
+    for (const m of mismatches) {
+      estimatedSavings += SEVERITY_COST[m.severity ?? "MODERATE"];
+    }
+    for (const m of missingItems) {
+      estimatedSavings += SEVERITY_COST[m.severity ?? "MODERATE"];
+    }
+  }
   const valueEstimate = pass2ValueEstimate ?? {
     errors_caught: errorsCaught,
-    estimated_savings_usd: errorsCaught * 350,
+    estimated_savings_usd: estimatedSavings,
     time_saved_minutes: Math.round(totalSpecItems * 1.5),
   };
 

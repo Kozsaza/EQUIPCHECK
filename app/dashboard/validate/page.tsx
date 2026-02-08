@@ -57,6 +57,11 @@ export default function ValidatePage() {
   }, [selectedSpecId, specs]);
 
   async function handleEquipmentFile(file: File) {
+    if (file.size > 10 * 1024 * 1024) {
+      setError("File is too large. Maximum size is 10MB.");
+      return;
+    }
+
     setEquipmentFile(file);
     setError(null);
     setParsing(true);

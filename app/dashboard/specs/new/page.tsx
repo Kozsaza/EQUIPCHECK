@@ -14,6 +14,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { PLAN_SPEC_LIMITS } from "@/types";
+import type { Profile } from "@/types";
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function NewSpecPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -27,6 +31,11 @@ export default function NewSpecPage() {
   const supabase = createClient();
 
   async function handleFileSelect(selectedFile: File) {
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      setError("File is too large. Maximum size is 10MB.");
+      return;
+    }
+
     setFile(selectedFile);
     setError(null);
     setParsing(true);
@@ -72,6 +81,31 @@ export default function NewSpecPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       router.push("/login");
+      return;
+    }
+
+    // Check spec limit for current plan
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("plan")
+      .eq("id", user.id)
+      .single();
+
+    const plan = (profile?.plan ?? "free") as Profile["plan"];
+    const specLimit = PLAN_SPEC_LIMITS[plan];
+
+    const { count } = await supabase
+      .from("specs")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id);
+
+    if ((count ?? 0) >= specLimit) {
+      setError(
+        plan === "free"
+          ? "Free plan is limited to 1 saved spec. Upgrade to Professional for unlimited specs."
+          : "Spec limit reached for your current plan."
+      );
+      setLoading(false);
       return;
     }
 
