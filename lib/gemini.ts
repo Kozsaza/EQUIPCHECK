@@ -359,7 +359,7 @@ VALUE ESTIMATE RULES:
 
 async function callGemini(prompt: string): Promise<string> {
   const model = getGenAI().getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-2.0-flash",
     generationConfig: {
       temperature: 0,
       maxOutputTokens: 8192,
