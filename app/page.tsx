@@ -30,6 +30,8 @@ import {
   AlertTriangle,
   MinusCircle,
   Flag,
+  Upload,
+  FileSpreadsheet,
 } from "lucide-react";
 
 /* ──────────────────────────── SECTION 1: NAVIGATION ──────────────────────────── */
@@ -98,6 +100,8 @@ const INDUSTRY_OPTIONS = [
   { id: "construction", label: "Construction", specName: "Door Hardware Schedule \u2014 Phase 2 Build", equipName: "Construction Material Order #5502" },
 ] as const;
 
+type DemoTab = "sample" | "upload";
+
 function HeroSection({
   onValidationResult,
   onValidationStart,
@@ -107,47 +111,7 @@ function HeroSection({
   onValidationStart: () => void;
   source?: string | null;
 }) {
-  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
-  const [isValidating, setIsValidating] = useState(false);
-  const [itemCount, setItemCount] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-
-  const industryData = INDUSTRY_OPTIONS.find((i) => i.id === selectedIndustry);
-
-  async function handleValidate() {
-    if (!selectedIndustry) return;
-    setIsValidating(true);
-    setError(null);
-    onValidationStart();
-
-    // Simulate item counts based on industry
-    const counts: Record<string, number> = { electrical: 18, hvac: 17, security: 16, construction: 18 };
-    setItemCount(counts[selectedIndustry] ?? 18);
-
-    try {
-      const res = await fetch("/api/demo-validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          industry: selectedIndustry,
-          session_id: getSessionId(),
-          source: source || undefined,
-        }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Validation failed");
-      }
-
-      const data = await res.json();
-      onValidationResult(data.result, selectedIndustry);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsValidating(false);
-    }
-  }
+  const [activeTab, setActiveTab] = useState<DemoTab>("sample");
 
   return (
     <section
@@ -184,79 +148,48 @@ function HeroSection({
 
         {/* Right: Live Demo Widget */}
         <div className="rounded-xl border border-white/10 bg-[#1E293B] p-6 shadow-2xl">
-          <p className="mb-5 text-sm font-semibold uppercase tracking-wider text-blue-400">
-            Try it now &mdash; no signup required
+          {/* Tab toggle */}
+          <div className="mb-4 flex rounded-lg bg-white/5 p-1">
+            <button
+              onClick={() => setActiveTab("sample")}
+              className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-all ${
+                activeTab === "sample"
+                  ? "bg-blue-500/20 text-blue-400 shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Sample Data
+            </button>
+            <button
+              onClick={() => setActiveTab("upload")}
+              className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-all ${
+                activeTab === "upload"
+                  ? "bg-blue-500/20 text-blue-400 shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Your Files
+            </button>
+          </div>
+          <p className="mb-4 text-xs text-slate-500">
+            {activeTab === "sample"
+              ? "See it in action with real industry data"
+              : "Try with your own spec and equipment list"}
           </p>
 
-          {/* Industry selector */}
-          <div className="mb-4">
-            <p className="mb-2 text-sm text-slate-400">Choose a sample industry:</p>
-            <div className="grid grid-cols-2 gap-2">
-              {INDUSTRY_OPTIONS.map((ind) => (
-                <button
-                  key={ind.id}
-                  onClick={() => { setSelectedIndustry(ind.id); setError(null); }}
-                  className={`rounded-lg border px-3 py-2.5 text-left text-sm font-medium transition-all ${
-                    selectedIndustry === ind.id
-                      ? "border-blue-500 bg-blue-500/10 text-blue-400"
-                      : "border-white/10 text-slate-400 hover:border-white/20 hover:text-white"
-                  }`}
-                >
-                  {ind.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Selected files display */}
-          {industryData && (
-            <div className="mb-4 space-y-2">
-              <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-blue-500/10">
-                  <FileX className="h-3.5 w-3.5 text-blue-400" />
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-xs font-medium text-white">Master Spec</p>
-                  <p className="truncate text-xs text-slate-500">{industryData.specName}</p>
-                </div>
-                <CheckCircle className="ml-auto h-4 w-4 shrink-0 text-emerald-400" />
-              </div>
-              <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-blue-500/10">
-                  <FileX className="h-3.5 w-3.5 text-blue-400" />
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-xs font-medium text-white">Equipment List</p>
-                  <p className="truncate text-xs text-slate-500">{industryData.equipName}</p>
-                </div>
-                <CheckCircle className="ml-auto h-4 w-4 shrink-0 text-emerald-400" />
-              </div>
-            </div>
+          {activeTab === "sample" ? (
+            <SampleDemoContent
+              onValidationResult={onValidationResult}
+              onValidationStart={onValidationStart}
+              source={source}
+            />
+          ) : (
+            <UploadDemoContent
+              onValidationResult={onValidationResult}
+              onValidationStart={onValidationStart}
+              source={source}
+            />
           )}
-
-          {error && (
-            <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
-              {error}
-            </div>
-          )}
-
-          <Button
-            onClick={handleValidate}
-            disabled={!selectedIndustry || isValidating}
-            className="w-full bg-gradient-to-br from-blue-600 to-blue-500 py-3 text-white shadow-[0_1px_3px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(37,99,235,0.35)] disabled:opacity-50 disabled:hover:translate-y-0"
-          >
-            {isValidating ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing {itemCount} items...
-              </>
-            ) : (
-              <>
-                <Zap className="mr-2 h-4 w-4" />
-                Validate Now
-              </>
-            )}
-          </Button>
 
           <p className="mt-3 text-center text-xs text-slate-600">
             Files are processed in memory and permanently deleted after validation.
@@ -265,6 +198,352 @@ function HeroSection({
         </div>
       </div>
     </section>
+  );
+}
+
+/* ── Sample Data Demo (Path 1) ── */
+
+function SampleDemoContent({
+  onValidationResult,
+  onValidationStart,
+  source,
+}: {
+  onValidationResult: (result: ValidationResult, industry: string) => void;
+  onValidationStart: () => void;
+  source?: string | null;
+}) {
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
+  const [itemCount, setItemCount] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
+  const industryData = INDUSTRY_OPTIONS.find((i) => i.id === selectedIndustry);
+
+  async function handleValidate() {
+    if (!selectedIndustry) return;
+    setIsValidating(true);
+    setError(null);
+    onValidationStart();
+
+    const counts: Record<string, number> = { electrical: 18, hvac: 17, security: 16, construction: 18 };
+    setItemCount(counts[selectedIndustry] ?? 18);
+
+    try {
+      const res = await fetch("/api/demo-validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          industry: selectedIndustry,
+          session_id: getSessionId(),
+          source: source || undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Validation failed");
+      }
+
+      const data = await res.json();
+      onValidationResult(data.result, selectedIndustry);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setIsValidating(false);
+    }
+  }
+
+  return (
+    <>
+      <div className="mb-4">
+        <p className="mb-2 text-sm text-slate-400">Choose a sample industry:</p>
+        <div className="grid grid-cols-2 gap-2">
+          {INDUSTRY_OPTIONS.map((ind) => (
+            <button
+              key={ind.id}
+              onClick={() => { setSelectedIndustry(ind.id); setError(null); }}
+              className={`rounded-lg border px-3 py-2.5 text-left text-sm font-medium transition-all ${
+                selectedIndustry === ind.id
+                  ? "border-blue-500 bg-blue-500/10 text-blue-400"
+                  : "border-white/10 text-slate-400 hover:border-white/20 hover:text-white"
+              }`}
+            >
+              {ind.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {industryData && (
+        <div className="mb-4 space-y-2">
+          <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-blue-500/10">
+              <FileX className="h-3.5 w-3.5 text-blue-400" />
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-xs font-medium text-white">Master Spec</p>
+              <p className="truncate text-xs text-slate-500">{industryData.specName}</p>
+            </div>
+            <CheckCircle className="ml-auto h-4 w-4 shrink-0 text-emerald-400" />
+          </div>
+          <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-blue-500/10">
+              <FileX className="h-3.5 w-3.5 text-blue-400" />
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-xs font-medium text-white">Equipment List</p>
+              <p className="truncate text-xs text-slate-500">{industryData.equipName}</p>
+            </div>
+            <CheckCircle className="ml-auto h-4 w-4 shrink-0 text-emerald-400" />
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+          {error}
+        </div>
+      )}
+
+      <Button
+        onClick={handleValidate}
+        disabled={!selectedIndustry || isValidating}
+        className="w-full bg-gradient-to-br from-blue-600 to-blue-500 py-3 text-white shadow-[0_1px_3px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(37,99,235,0.35)] disabled:opacity-50 disabled:hover:translate-y-0"
+      >
+        {isValidating ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Analyzing {itemCount} items...
+          </>
+        ) : (
+          <>
+            <Zap className="mr-2 h-4 w-4" />
+            Validate Now
+          </>
+        )}
+      </Button>
+    </>
+  );
+}
+
+/* ── Upload Demo (Path 2) ── */
+
+function DarkFileDropZone({
+  onFileSelect,
+  selectedFile,
+  onClear,
+  accept,
+  label,
+}: {
+  onFileSelect: (file: File) => void;
+  selectedFile: File | null;
+  onClear: () => void;
+  accept: string;
+  label: string;
+}) {
+  const [dragActive, setDragActive] = useState(false);
+
+  if (selectedFile) {
+    return (
+      <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <FileSpreadsheet className="h-4 w-4 shrink-0 text-blue-400" />
+          <span className="truncate text-xs text-white">{selectedFile.name}</span>
+          <span className="text-[10px] text-slate-500">
+            ({(selectedFile.size / 1024).toFixed(0)} KB)
+          </span>
+        </div>
+        <button onClick={onClear} className="ml-2 shrink-0 text-slate-500 hover:text-white">
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <label
+      className={`flex cursor-pointer flex-col items-center rounded-lg border-2 border-dashed px-4 py-5 transition-colors ${
+        dragActive
+          ? "border-blue-500 bg-blue-500/10"
+          : "border-white/10 hover:border-white/20"
+      }`}
+      onDragEnter={(e) => { e.preventDefault(); setDragActive(true); }}
+      onDragLeave={(e) => { e.preventDefault(); setDragActive(false); }}
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        e.preventDefault();
+        setDragActive(false);
+        const f = e.dataTransfer.files[0];
+        if (f) onFileSelect(f);
+      }}
+    >
+      <Upload className="mb-1.5 h-4 w-4 text-slate-500" />
+      <span className="text-xs text-slate-400">
+        Drop {label} or <span className="text-blue-400">browse</span>
+      </span>
+      <span className="mt-0.5 text-[10px] text-slate-600">
+        CSV, Excel, PDF, or TXT
+      </span>
+      <input
+        type="file"
+        className="hidden"
+        accept={accept}
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) onFileSelect(f);
+        }}
+      />
+    </label>
+  );
+}
+
+function UploadDemoContent({
+  onValidationResult,
+  onValidationStart,
+  source,
+}: {
+  onValidationResult: (result: ValidationResult, industry: string) => void;
+  onValidationStart: () => void;
+  source?: string | null;
+}) {
+  const [specFile, setSpecFile] = useState<File | null>(null);
+  const [equipFile, setEquipFile] = useState<File | null>(null);
+  const [specMode, setSpecMode] = useState<"file" | "paste">("file");
+  const [equipMode, setEquipMode] = useState<"file" | "paste">("file");
+  const [specText, setSpecText] = useState("");
+  const [equipText, setEquipText] = useState("");
+  const [isValidating, setIsValidating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const hasSpec = specFile || specText.trim();
+  const hasEquip = equipFile || equipText.trim();
+
+  async function handleValidate() {
+    if (!hasSpec || !hasEquip) return;
+    setIsValidating(true);
+    setError(null);
+    onValidationStart();
+
+    try {
+      const formData = new FormData();
+      if (specFile) formData.append("specFile", specFile);
+      else formData.append("specText", specText);
+      if (equipFile) formData.append("equipmentFile", equipFile);
+      else formData.append("equipmentText", equipText);
+      formData.append("session_id", getSessionId());
+      if (source) formData.append("source", source);
+
+      const res = await fetch("/api/validate-upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Validation failed");
+      }
+
+      const data = await res.json();
+      onValidationResult(data.result, "custom");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setIsValidating(false);
+    }
+  }
+
+  return (
+    <>
+      {/* Spec input */}
+      <div className="mb-3">
+        <div className="mb-1.5 flex items-center justify-between">
+          <p className="text-xs font-medium text-slate-300">Master Spec</p>
+          <button
+            onClick={() => {
+              setSpecMode(specMode === "file" ? "paste" : "file");
+              setSpecFile(null);
+              setSpecText("");
+            }}
+            className="text-[11px] text-blue-400 hover:text-blue-300"
+          >
+            {specMode === "file" ? "or paste your data" : "or upload a file"}
+          </button>
+        </div>
+        {specMode === "file" ? (
+          <DarkFileDropZone
+            onFileSelect={setSpecFile}
+            selectedFile={specFile}
+            onClear={() => setSpecFile(null)}
+            accept=".csv,.xlsx,.xls,.pdf,.txt"
+            label="spec file"
+          />
+        ) : (
+          <textarea
+            value={specText}
+            onChange={(e) => setSpecText(e.target.value)}
+            placeholder="Paste your spec data here (CSV, tab-separated, or plain text)..."
+            className="h-24 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        )}
+      </div>
+
+      {/* Equipment input */}
+      <div className="mb-4">
+        <div className="mb-1.5 flex items-center justify-between">
+          <p className="text-xs font-medium text-slate-300">Equipment List</p>
+          <button
+            onClick={() => {
+              setEquipMode(equipMode === "file" ? "paste" : "file");
+              setEquipFile(null);
+              setEquipText("");
+            }}
+            className="text-[11px] text-blue-400 hover:text-blue-300"
+          >
+            {equipMode === "file" ? "or paste your data" : "or upload a file"}
+          </button>
+        </div>
+        {equipMode === "file" ? (
+          <DarkFileDropZone
+            onFileSelect={setEquipFile}
+            selectedFile={equipFile}
+            onClear={() => setEquipFile(null)}
+            accept=".csv,.xlsx,.xls,.pdf,.txt"
+            label="equipment file"
+          />
+        ) : (
+          <textarea
+            value={equipText}
+            onChange={(e) => setEquipText(e.target.value)}
+            placeholder="Paste your equipment list here (CSV, tab-separated, or plain text)..."
+            className="h-24 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        )}
+      </div>
+
+      {error && (
+        <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+          {error}
+        </div>
+      )}
+
+      <Button
+        onClick={handleValidate}
+        disabled={!hasSpec || !hasEquip || isValidating}
+        className="w-full bg-gradient-to-br from-blue-600 to-blue-500 py-3 text-white shadow-[0_1px_3px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(37,99,235,0.35)] disabled:opacity-50 disabled:hover:translate-y-0"
+      >
+        {isValidating ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Analyzing your files...
+          </>
+        ) : (
+          <>
+            <Zap className="mr-2 h-4 w-4" />
+            Validate Now
+          </>
+        )}
+      </Button>
+    </>
   );
 }
 
@@ -368,7 +647,9 @@ function ResultsSection({
             Validation Complete
           </p>
           <h2 className="mt-2 font-display text-2xl font-bold text-slate-900 sm:text-3xl">
-            {industry.charAt(0).toUpperCase() + industry.slice(1)} Validation Results
+            {industry === "custom"
+              ? `${result.industry_detected ?? "Custom"} Validation Results`
+              : `${industry.charAt(0).toUpperCase() + industry.slice(1)} Validation Results`}
           </h2>
         </div>
 
