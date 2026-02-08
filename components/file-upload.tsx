@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Upload, FileSpreadsheet, X } from "lucide-react";
+import { Upload, FileSpreadsheet, X, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface FileUploadProps {
@@ -110,6 +110,10 @@ export function FileUpload({
           <span>Browse Files</span>
         </Button>
       </label>
+      <p className="mt-4 flex items-center gap-1.5 text-[11px] text-muted-foreground/60">
+        <Lock className="h-3 w-3" />
+        Files are processed in memory and permanently deleted after validation. We never store, train on, or share your data.
+      </p>
     </div>
   );
 }

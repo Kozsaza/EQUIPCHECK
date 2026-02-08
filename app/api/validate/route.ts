@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { runValidation } from "@/lib/gemini";
-import { PLAN_LIMITS } from "@/types";
+import { PLAN_LIMITS, PLAN_FEATURES } from "@/types";
+import type { Profile } from "@/types";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
     .eq("id", user.id)
     .single();
 
-  const plan = (profile?.plan ?? "free") as keyof typeof PLAN_LIMITS;
+  const plan = (profile?.plan ?? "free") as Profile["plan"];
   const limit = PLAN_LIMITS[plan];
   const used = profile?.validations_this_month ?? 0;
 
@@ -42,7 +43,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const validationResult = await runValidation(equipmentData, specData);
+    const dualPass = PLAN_FEATURES[plan].dualPass;
+    const validationResult = await runValidation(equipmentData, specData, { dualPass });
 
     const { data: validation, error: dbError } = await supabase
       .from("validations")

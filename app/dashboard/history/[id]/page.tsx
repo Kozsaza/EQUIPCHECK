@@ -65,7 +65,7 @@ export default function ValidationDetailPage() {
         <PdfDownloadButton validation={validation} result={result} />
       </div>
 
-      <ValidationResultView result={result} />
+      <ValidationResultView result={result} validationId={validation.id} />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { ValidationResult } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,15 +13,39 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, XCircle, AlertTriangle, HelpCircle } from "lucide-react";
+import { CheckCircle2, XCircle, AlertTriangle, HelpCircle, Flag } from "lucide-react";
+import { FlagModal } from "@/components/flag-modal";
 
 interface ValidationResultProps {
   result: ValidationResult;
+  validationId?: string;
 }
 
-export function ValidationResultView({ result }: ValidationResultProps) {
+export function ValidationResultView({ result, validationId }: ValidationResultProps) {
   const { summary, matches, mismatches, missing_from_equipment, extra_in_equipment } =
     result;
+
+  const [flagOpen, setFlagOpen] = useState(false);
+  const [flagTarget, setFlagTarget] = useState<{
+    status: string;
+    specItem: string;
+    equipItem: string | null;
+  } | null>(null);
+
+  const openFlag = (status: string, specItem: string, equipItem: string | null) => {
+    setFlagTarget({ status, specItem, equipItem });
+    setFlagOpen(true);
+  };
+
+  const FlagButton = ({ status, spec, equip }: { status: string; spec: string; equip: string | null }) => (
+    <button
+      onClick={() => openFlag(status, spec, equip)}
+      className="rounded p-1 text-muted-foreground/40 transition-colors hover:bg-muted hover:text-muted-foreground"
+      title="Flag this result"
+    >
+      <Flag className="h-3.5 w-3.5" />
+    </button>
+  );
 
   const statusIcon = {
     PASS: <CheckCircle2 className="h-6 w-6 text-success" />,
@@ -40,7 +65,7 @@ export function ValidationResultView({ result }: ValidationResultProps) {
       <Card className={statusColor[summary.validation_status]}>
         <CardContent className="flex items-center gap-4 pt-6">
           {statusIcon[summary.validation_status]}
-          <div>
+          <div className="flex-1">
             <h3 className="text-lg font-semibold">
               {summary.validation_status === "PASS"
                 ? "Validation Passed"
@@ -56,6 +81,47 @@ export function ValidationResultView({ result }: ValidationResultProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Confidence indicator (for dual-pass results) */}
+      {result.overall_confidence && result.verification_status !== "SINGLE_PASS" && (
+        <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3">
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
+          <div className="flex-1 text-sm">
+            <span className="font-medium">
+              {result.verification_status === "CONFIRMED"
+                ? "Dual-Pass Verification Complete"
+                : result.verification_status === "CORRECTIONS_MADE"
+                  ? "Dual-Pass Verification Complete (corrections applied)"
+                  : "Verification Status: " + result.verification_status}
+            </span>
+            <span className="mx-2 text-muted-foreground">&middot;</span>
+            <span className="text-muted-foreground">
+              Overall Confidence:{" "}
+              <span className={`font-semibold ${
+                result.overall_confidence === "HIGH" ? "text-success"
+                : result.overall_confidence === "MEDIUM" ? "text-warning"
+                : "text-destructive"
+              }`}>{result.overall_confidence}</span>
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Value estimate */}
+      {result.value_estimate && (result.value_estimate.errors_caught > 0) && (
+        <div className="flex items-center gap-4 rounded-lg border-l-4 border-l-blue-500 bg-blue-50/50 px-4 py-3">
+          <div className="text-sm text-slate-700">
+            <span className="font-semibold">{result.value_estimate.errors_caught} error{result.value_estimate.errors_caught !== 1 ? "s" : ""} caught</span>
+            <span className="mx-2 text-slate-400">&middot;</span>
+            <span className="font-mono font-semibold text-blue-600">
+              ${result.value_estimate.estimated_savings_usd.toLocaleString()}
+            </span>{" "}
+            estimated savings
+            <span className="mx-2 text-slate-400">&middot;</span>
+            ~{result.value_estimate.time_saved_minutes} min saved
+          </div>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
@@ -124,6 +190,7 @@ export function ValidationResultView({ result }: ValidationResultProps) {
                         <TableHead>Match</TableHead>
                         <TableHead>Qty</TableHead>
                         <TableHead>Notes</TableHead>
+                        <TableHead className="w-10"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -147,6 +214,9 @@ export function ValidationResultView({ result }: ValidationResultProps) {
                           </TableCell>
                           <TableCell className="text-sm text-muted-foreground">
                             {m.notes}
+                          </TableCell>
+                          <TableCell>
+                            <FlagButton status={m.match_type === "exact" ? "MATCH" : "REVIEW"} spec={m.spec_item} equip={m.equipment_item} />
                           </TableCell>
                         </TableRow>
                       ))}
@@ -176,6 +246,7 @@ export function ValidationResultView({ result }: ValidationResultProps) {
                         <TableHead>Issue</TableHead>
                         <TableHead>Got</TableHead>
                         <TableHead>Expected</TableHead>
+                        <TableHead className="w-10"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -186,6 +257,9 @@ export function ValidationResultView({ result }: ValidationResultProps) {
                           <TableCell className="text-destructive">{m.issue}</TableCell>
                           <TableCell className="font-mono text-xs">{m.equipment_value}</TableCell>
                           <TableCell className="font-mono text-xs">{m.spec_value}</TableCell>
+                          <TableCell>
+                            <FlagButton status="MISMATCH" spec={m.spec_item} equip={m.equipment_item} />
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -212,6 +286,7 @@ export function ValidationResultView({ result }: ValidationResultProps) {
                         <TableHead>Spec Item</TableHead>
                         <TableHead>Required Qty</TableHead>
                         <TableHead>Notes</TableHead>
+                        <TableHead className="w-10"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -221,6 +296,9 @@ export function ValidationResultView({ result }: ValidationResultProps) {
                           <TableCell className="font-mono text-xs">{m.spec_qty}</TableCell>
                           <TableCell className="text-sm text-muted-foreground">
                             {m.notes}
+                          </TableCell>
+                          <TableCell>
+                            <FlagButton status="MISSING" spec={m.spec_item} equip={null} />
                           </TableCell>
                         </TableRow>
                       ))}
@@ -248,6 +326,7 @@ export function ValidationResultView({ result }: ValidationResultProps) {
                         <TableHead>Equipment Item</TableHead>
                         <TableHead>Qty</TableHead>
                         <TableHead>Notes</TableHead>
+                        <TableHead className="w-10"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -257,6 +336,9 @@ export function ValidationResultView({ result }: ValidationResultProps) {
                           <TableCell className="font-mono text-xs">{m.equipment_qty}</TableCell>
                           <TableCell className="text-sm text-muted-foreground">
                             {m.notes}
+                          </TableCell>
+                          <TableCell>
+                            <FlagButton status="EXTRA" spec={m.equipment_item} equip={m.equipment_item} />
                           </TableCell>
                         </TableRow>
                       ))}
@@ -270,6 +352,35 @@ export function ValidationResultView({ result }: ValidationResultProps) {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Feedback banner */}
+      <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50/50 px-4 py-3">
+        <Flag className="h-4 w-4 shrink-0 text-blue-500" />
+        <p className="text-sm text-muted-foreground">
+          Did we get something wrong?{" "}
+          <button
+            onClick={() => openFlag("", "", null)}
+            className="font-medium text-blue-600 underline decoration-blue-300 underline-offset-2 hover:text-blue-700"
+          >
+            Flag it
+          </button>{" "}
+          and help us improve accuracy for your industry.
+        </p>
+      </div>
+
+      {/* Flag modal */}
+      {flagTarget && (
+        <FlagModal
+          isOpen={flagOpen}
+          onClose={() => setFlagOpen(false)}
+          originalStatus={flagTarget.status}
+          specItem={flagTarget.specItem}
+          equipmentItem={flagTarget.equipItem}
+          industryDetected={result.industry_detected}
+          validationId={validationId}
+          validationPass={result.verification_status === "SINGLE_PASS" ? "single_pass" : "dual_pass"}
+        />
+      )}
     </div>
   );
 }

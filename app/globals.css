@@ -80,6 +80,12 @@
   /* Primary - Deep Slate */
   --primary: #0F172A;
   --primary-foreground: #FFFFFF;
+  --primary-950: #020617;
+  --primary-900: #0F172A;
+  --primary-800: #1E293B;
+  --primary-700: #334155;
+  --primary-600: #475569;
+  --primary-500: #64748B;
 
   /* Secondary - Slate */
   --secondary: #475569;
@@ -88,6 +94,12 @@
   /* Accent - Bright Blue */
   --accent: #2563EB;
   --accent-foreground: #FFFFFF;
+  --accent-700: #1D4ED8;
+  --accent-600: #2563EB;
+  --accent-500: #3B82F6;
+  --accent-400: #60A5FA;
+  --accent-300: #93C5FD;
+  --accent-200: #BFDBFE;
 
   /* Semantic */
   --success: #10B981;
@@ -104,6 +116,18 @@
   --card-foreground: #1E293B;
   --popover: #FFFFFF;
   --popover-foreground: #1E293B;
+  --surface-primary: #FFFFFF;
+  --surface-secondary: #F8FAFC;
+  --surface-tertiary: #F1F5F9;
+  --surface-dark: #0F172A;
+  --surface-dark-secondary: #1E293B;
+
+  /* Text */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-tertiary: #94A3B8;
+  --text-on-dark: #F8FAFC;
+  --text-on-dark-secondary: #CBD5E1;
 
   /* Muted */
   --muted: #F1F5F9;
@@ -111,6 +135,8 @@
 
   /* Borders & Inputs */
   --border: #E2E8F0;
+  --border-medium: #CBD5E1;
+  --border-accent: #3B82F6;
   --input: #E2E8F0;
   --ring: #3B82F6;
 

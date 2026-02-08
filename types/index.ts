@@ -40,6 +40,8 @@ export interface ValidationMatch {
   equipment_qty: number;
   spec_qty: number;
   notes: string;
+  confidence?: "HIGH" | "MEDIUM" | "LOW";
+  severity?: "CRITICAL" | "MODERATE" | "LOW" | null;
 }
 
 export interface ValidationMismatch {
@@ -48,18 +50,23 @@ export interface ValidationMismatch {
   issue: string;
   equipment_value: string;
   spec_value: string;
+  confidence?: "HIGH" | "MEDIUM" | "LOW";
+  severity?: "CRITICAL" | "MODERATE" | "LOW" | null;
 }
 
 export interface MissingItem {
   spec_item: string;
   spec_qty: number;
   notes: string;
+  confidence?: "HIGH" | "MEDIUM" | "LOW";
+  severity?: "CRITICAL" | "MODERATE" | "LOW" | null;
 }
 
 export interface ExtraItem {
   equipment_item: string;
   equipment_qty: number;
   notes: string;
+  confidence?: "HIGH" | "MEDIUM" | "LOW";
 }
 
 export interface ValidationSummary {
@@ -73,12 +80,23 @@ export interface ValidationSummary {
   validation_status: "PASS" | "FAIL" | "REVIEW_NEEDED";
 }
 
+export interface ValueEstimate {
+  errors_caught: number;
+  estimated_savings_usd: number;
+  time_saved_minutes: number;
+}
+
 export interface ValidationResult {
   matches: ValidationMatch[];
   mismatches: ValidationMismatch[];
   missing_from_equipment: MissingItem[];
   extra_in_equipment: ExtraItem[];
   summary: ValidationSummary;
+  // Dual-pass enhancement fields (optional for backward compat)
+  industry_detected?: string;
+  verification_status?: "CONFIRMED" | "CORRECTIONS_MADE" | "SINGLE_PASS" | "VERIFICATION_FAILED";
+  overall_confidence?: "HIGH" | "MEDIUM" | "LOW";
+  value_estimate?: ValueEstimate;
 }
 
 export const PLAN_LIMITS: Record<Profile["plan"], number> = {
@@ -92,3 +110,31 @@ export const PLAN_SPEC_LIMITS: Record<Profile["plan"], number> = {
   professional: Infinity,
   business: Infinity,
 };
+
+export const PLAN_FEATURES = {
+  free: { dualPass: false, pdfExport: false, specs: 1 },
+  professional: { dualPass: true, pdfExport: true, specs: Infinity },
+  business: { dualPass: true, pdfExport: true, specs: Infinity },
+} as const;
+
+export interface ValidationFlag {
+  id: string;
+  created_at: string;
+  user_id: string | null;
+  validation_id: string | null;
+  industry_detected: string | null;
+  original_status: string;
+  user_correction: "should_be_match" | "should_be_mismatch" | "wrong_quantity" | "duplicated" | "other";
+  item_description_spec: string;
+  item_description_equipment: string | null;
+  user_note: string | null;
+  validation_pass: "single_pass" | "dual_pass" | null;
+}
+
+export const FLAG_REASONS = [
+  { value: "should_be_match" as const, label: "This should be a MATCH (it's the same item)" },
+  { value: "should_be_mismatch" as const, label: "This should be a MISMATCH (it's different)" },
+  { value: "wrong_quantity" as const, label: "Quantity is wrong" },
+  { value: "duplicated" as const, label: "Item is duplicated" },
+  { value: "other" as const, label: "Other" },
+] as const;

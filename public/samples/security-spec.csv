@@ -1,0 +1,16 @@
+Location,Device_Type,Description,Quantity,Specification
+Front Entrance,"IP Camera","4MP Dome, Fixed 2.8mm, PoE, IR 100ft",2,"Hikvision DS-2CD2143G2-I"
+Parking Lot,"IP Camera","4MP Bullet, VF 2.8-12mm, PoE, IR 165ft",4,"Hikvision DS-2CD2643G2-IZS"
+Loading Dock,"IP Camera","4MP Bullet, VF 2.8-12mm, PoE, IR 165ft",2,"Hikvision DS-2CD2643G2-IZS"
+Interior Hallway,"IP Camera","2MP Dome, Fixed 2.8mm, PoE, IR 100ft",6,"Hikvision DS-2CD2123G2-I"
+Server Room,"IP Camera","4MP Dome, Fixed 2.8mm, PoE, IR 100ft",1,"Hikvision DS-2CD2143G2-I"
+NVR Location,"Network Video Recorder","32-Channel, 4-Bay, 4K Output",1,"Hikvision DS-7732NI-I4"
+NVR Location,"Hard Drive","8TB Surveillance Grade",4,"Seagate SkyHawk ST8000VE001"
+Various,"PoE Network Switch","24-Port PoE+ Managed, 370W",1,"Hikvision DS-3E1326P-EI"
+Various,"CAT6 Plenum Cable","1000ft Spool, Blue",3 spools,"Monoprice 18597"
+Various,"Wall Mount Bracket, Dome",9,—,"Hikvision DS-1272ZJ-110"
+Various,"Junction Box, Bullet Camera",6,—,"Hikvision DS-1280ZJ-DM46"
+Various,"Outdoor Weatherproof Box, PoE",6,—,"Hikvision DS-1284ZJ-M"
+Various,"Cable Ties, 8in, Black",2 packs,—,"Panduit PLT2S-M0"
+Various,"RJ45 Connectors, Cat6, Shielded",100 pack,1,—
+Various,"Keystone Jack, Cat6",12,—,"Leviton 6110G-RW6"
