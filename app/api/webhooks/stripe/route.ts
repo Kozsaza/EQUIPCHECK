@@ -1,13 +1,7 @@
-import { stripe } from "@/lib/stripe";
-import { createClient } from "@supabase/supabase-js";
+import { getStripe } from "@/lib/stripe";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-
-// Use service role key for webhook (no user session)
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -16,7 +10,7 @@ export async function POST(request: Request) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
@@ -36,7 +30,7 @@ export async function POST(request: Request) {
       const plan = session.metadata?.plan;
 
       if (userId && plan) {
-        await supabase
+        await getSupabaseAdmin()
           .from("profiles")
           .update({
             plan,
@@ -53,7 +47,7 @@ export async function POST(request: Request) {
       const subscription = event.data.object as Stripe.Subscription;
       const customerId = subscription.customer as string;
 
-      const { data: profile } = await supabase
+      const { data: profile } = await getSupabaseAdmin()
         .from("profiles")
         .select("id")
         .eq("stripe_customer_id", customerId)
@@ -65,7 +59,7 @@ export async function POST(request: Request) {
           subscription.status === "trialing";
 
         if (!isActive) {
-          await supabase
+          await getSupabaseAdmin()
             .from("profiles")
             .update({ plan: "free", updated_at: new Date().toISOString() })
             .eq("id", profile.id);
@@ -78,7 +72,7 @@ export async function POST(request: Request) {
       const subscription = event.data.object as Stripe.Subscription;
       const customerId = subscription.customer as string;
 
-      await supabase
+      await getSupabaseAdmin()
         .from("profiles")
         .update({ plan: "free", updated_at: new Date().toISOString() })
         .eq("stripe_customer_id", customerId);

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing session_id" }, { status: 400 });
   }
 
-  const { data } = await supabaseAdmin
+  const { data } = await getSupabaseAdmin()
     .from("validation_logs")
     .update({ user_id: user.id })
     .eq("session_id", session_id)
