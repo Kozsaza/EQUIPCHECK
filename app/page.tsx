@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { Suspense, useState, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { FlagModal } from "@/components/flag-modal";
+import { SignInNudge } from "@/components/signin-nudge";
+import { getSessionId } from "@/lib/session-id";
 import type { ValidationResult } from "@/types";
 import {
   Check,
@@ -98,9 +101,11 @@ const INDUSTRY_OPTIONS = [
 function HeroSection({
   onValidationResult,
   onValidationStart,
+  source,
 }: {
   onValidationResult: (result: ValidationResult, industry: string) => void;
   onValidationStart: () => void;
+  source?: string | null;
 }) {
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -123,7 +128,11 @@ function HeroSection({
       const res = await fetch("/api/demo-validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ industry: selectedIndustry }),
+        body: JSON.stringify({
+          industry: selectedIndustry,
+          session_id: getSessionId(),
+          source: source || undefined,
+        }),
       });
 
       if (!res.ok) {
@@ -1337,6 +1346,17 @@ function Footer() {
 /* ──────────────────────────── PAGE ──────────────────────────── */
 
 export default function LandingPage() {
+  return (
+    <Suspense>
+      <LandingPageInner />
+    </Suspense>
+  );
+}
+
+function LandingPageInner() {
+  const searchParams = useSearchParams();
+  const source = searchParams.get("ref");
+
   const [demoResult, setDemoResult] = useState<ValidationResult | null>(null);
   const [demoIndustry, setDemoIndustry] = useState<string>("");
   const [showResults, setShowResults] = useState(false);
@@ -1363,12 +1383,14 @@ export default function LandingPage() {
       <HeroSection
         onValidationResult={handleValidationResult}
         onValidationStart={handleValidationStart}
+        source={source}
       />
 
       {/* Results section — hidden until demo runs */}
       {showResults && demoResult && (
         <div ref={resultsRef}>
           <ResultsSection result={demoResult} industry={demoIndustry} />
+          <SignInNudge />
         </div>
       )}
 

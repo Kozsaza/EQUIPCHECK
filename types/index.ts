@@ -131,6 +131,25 @@ export interface ValidationFlag {
   validation_pass: "single_pass" | "dual_pass" | null;
 }
 
+export interface ValidationLog {
+  id: string;
+  created_at: string;
+  user_id: string | null;
+  session_id: string | null;
+  industry_detected: string | null;
+  match_count: number;
+  mismatch_count: number;
+  missing_count: number;
+  extra_count: number;
+  review_count: number;
+  critical_count: number;
+  processing_time_ms: number | null;
+  confidence_level: "HIGH" | "MEDIUM" | "LOW" | null;
+  validation_status: "PASS" | "FAIL" | "REVIEW_NEEDED" | null;
+  is_demo: boolean;
+  source: string | null;
+}
+
 export const FLAG_REASONS = [
   { value: "should_be_match" as const, label: "This should be a MATCH (it's the same item)" },
   { value: "should_be_mismatch" as const, label: "This should be a MISMATCH (it's different)" },

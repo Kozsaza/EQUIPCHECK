@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, FileCheck } from "lucide-react";
+import { getSessionId } from "@/lib/session-id";
 import type { Spec } from "@/types";
 
 export default function ValidatePage() {
@@ -98,6 +99,7 @@ export default function ValidatePage() {
           specId: selectedSpec.id,
           specName: selectedSpec.name,
           equipmentFilename: equipmentFile?.name,
+          session_id: getSessionId(),
         }),
       });
 

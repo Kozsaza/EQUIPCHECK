@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { runValidation } from "@/lib/gemini";
+import { logValidation } from "@/lib/log-validation";
 import { PLAN_LIMITS, PLAN_FEATURES } from "@/types";
 import type { Profile } from "@/types";
 import { NextResponse } from "next/server";
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { equipmentData, specData, specId, specName, equipmentFilename } =
+  const { equipmentData, specData, specId, specName, equipmentFilename, session_id } =
     await request.json();
 
   if (!equipmentData || !specData || !specName) {
@@ -44,7 +45,9 @@ export async function POST(request: Request) {
 
   try {
     const dualPass = PLAN_FEATURES[plan].dualPass;
+    const t0 = Date.now();
     const validationResult = await runValidation(equipmentData, specData, { dualPass });
+    const processingTimeMs = Date.now() - t0;
 
     const { data: validation, error: dbError } = await supabase
       .from("validations")
@@ -61,6 +64,15 @@ export async function POST(request: Request) {
       .single();
 
     if (dbError) throw dbError;
+
+    // Fire-and-forget logging (metadata only)
+    logValidation({
+      result: validationResult,
+      userId: user.id,
+      sessionId: session_id,
+      isDemo: false,
+      processingTimeMs,
+    }).catch(() => {});
 
     await supabase
       .from("profiles")

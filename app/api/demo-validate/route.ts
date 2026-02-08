@@ -1,4 +1,5 @@
 import { runValidation } from "@/lib/gemini";
+import { logValidation } from "@/lib/log-validation";
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
@@ -51,7 +52,11 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { industry } = body as { industry?: string };
+    const { industry, session_id, source } = body as {
+      industry?: string;
+      session_id?: string;
+      source?: string;
+    };
 
     if (!industry || !VALID_INDUSTRIES.includes(industry as Industry)) {
       return NextResponse.json(
@@ -65,7 +70,18 @@ export async function POST(request: Request) {
     const equipmentData = await loadSampleCSV(`${industry}-equipment.csv`);
 
     // Run Gemini validation (same engine as authenticated route)
+    const t0 = Date.now();
     const validationResult = await runValidation(equipmentData, specData);
+    const processingTimeMs = Date.now() - t0;
+
+    // Fire-and-forget logging (metadata only, no file contents)
+    logValidation({
+      result: validationResult,
+      sessionId: session_id,
+      isDemo: true,
+      source: source ?? null,
+      processingTimeMs,
+    }).catch(() => {});
 
     return NextResponse.json({
       success: true,
