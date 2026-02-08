@@ -15,8 +15,9 @@ import {
   LogOut,
   Menu,
   X,
+  ShieldCheck,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -27,11 +28,20 @@ const navItems = [
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
+const ADMIN_EMAIL = "admin@test.com";
+
 export function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email === ADMIN_EMAIL) setIsAdmin(true);
+    });
+  }, [supabase]);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -93,6 +103,25 @@ export function Navigation() {
               </Link>
             );
           })}
+
+          {isAdmin && (
+            <>
+              <div className="my-2 border-t border-white/10" />
+              <Link
+                href="/dashboard/admin"
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  pathname.startsWith("/dashboard/admin")
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-400 hover:bg-white/10 hover:text-white"
+                )}
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Admin
+              </Link>
+            </>
+          )}
         </nav>
 
         <div className="border-t border-white/10 p-3">
