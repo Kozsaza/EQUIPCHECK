@@ -52,10 +52,13 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { industry, session_id, source } = body as {
+    const { industry, session_id, source, utm_source, utm_medium, utm_campaign } = body as {
       industry?: string;
       session_id?: string;
       source?: string;
+      utm_source?: string;
+      utm_medium?: string;
+      utm_campaign?: string;
     };
 
     if (!industry || !VALID_INDUSTRIES.includes(industry as Industry)) {
@@ -81,6 +84,9 @@ export async function POST(request: Request) {
       isDemo: true,
       source: source ?? null,
       processingTimeMs,
+      utmSource: utm_source,
+      utmMedium: utm_medium,
+      utmCampaign: utm_campaign,
     }).catch(() => {});
 
     return NextResponse.json({

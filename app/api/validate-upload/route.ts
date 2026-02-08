@@ -44,6 +44,9 @@ export async function POST(request: Request) {
     const equipmentText = formData.get("equipmentText") as string | null;
     const sessionId = formData.get("session_id") as string | null;
     const source = formData.get("source") as string | null;
+    const utmSource = formData.get("utm_source") as string | null;
+    const utmMedium = formData.get("utm_medium") as string | null;
+    const utmCampaign = formData.get("utm_campaign") as string | null;
 
     // Validate: must have data for both spec and equipment
     if (!specFile && !specText?.trim()) {
@@ -112,6 +115,9 @@ export async function POST(request: Request) {
       isDemo: false,
       source: source ?? "upload_demo",
       processingTimeMs,
+      utmSource: utmSource,
+      utmMedium: utmMedium,
+      utmCampaign: utmCampaign,
     }).catch(() => {});
 
     return NextResponse.json({

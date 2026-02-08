@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { equipmentData, specData, specId, specName, equipmentFilename, session_id } =
+  const { equipmentData, specData, specId, specName, equipmentFilename, session_id, utm_source, utm_medium, utm_campaign } =
     await request.json();
 
   if (!equipmentData || !specData || !specName) {
@@ -72,6 +72,9 @@ export async function POST(request: Request) {
       sessionId: session_id,
       isDemo: false,
       processingTimeMs,
+      utmSource: utm_source,
+      utmMedium: utm_medium,
+      utmCampaign: utm_campaign,
     }).catch(() => {});
 
     await supabase

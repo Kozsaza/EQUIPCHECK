@@ -25,6 +25,12 @@ export async function GET() {
     recentLogsRes,
     allUsersRes,
     dailyLogsRes,
+    allLogsForIndustryRes,
+    flagsRes,
+    flagsCountRes,
+    utmLogsRes,
+    specsRes,
+    pdfDownloadsRes,
   ] = await Promise.all([
     // Total demo validations (all time)
     admin
@@ -71,12 +77,48 @@ export async function GET() {
         "created_at",
         new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
       ),
+
+    // All logs for industry breakdown (exclude pdf_download tracking entries)
+    admin
+      .from("validation_logs")
+      .select("industry_detected")
+      .not("industry_detected", "is", null)
+      .neq("source", "pdf_download"),
+
+    // Recent 20 validation flags
+    admin
+      .from("validation_flags")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(20),
+
+    // Total flags count
+    admin
+      .from("validation_flags")
+      .select("*", { count: "exact", head: true }),
+
+    // UTM data from validation logs
+    admin
+      .from("validation_logs")
+      .select("utm_source, utm_medium, utm_campaign")
+      .not("utm_source", "is", null),
+
+    // All specs for feature adoption
+    admin
+      .from("specs")
+      .select("user_id"),
+
+    // PDF download count
+    admin
+      .from("validation_logs")
+      .select("*", { count: "exact", head: true })
+      .eq("source", "pdf_download"),
   ]);
 
   // Get total validations per user for the user table
   const userIds = (allUsersRes.data ?? []).map((u) => u.id);
-  let userValidationCounts: Record<string, number> = {};
-  let userLastActive: Record<string, string> = {};
+  const userValidationCounts: Record<string, number> = {};
+  const userLastActive: Record<string, string> = {};
 
   if (userIds.length > 0) {
     const { data: userLogs } = await admin
@@ -151,6 +193,47 @@ export async function GET() {
     source: log.source,
   }));
 
+  // Industry breakdown
+  const industryCounts: Record<string, number> = {};
+  for (const log of allLogsForIndustryRes.data ?? []) {
+    const industry = log.industry_detected ?? "Unknown";
+    industryCounts[industry] = (industryCounts[industry] ?? 0) + 1;
+  }
+  const industryBreakdown = Object.entries(industryCounts)
+    .map(([industry, count]) => ({ industry, count }))
+    .sort((a, b) => b.count - a.count);
+
+  // Flags breakdown
+  const flagsByType: Record<string, number> = {};
+  for (const flag of flagsRes.data ?? []) {
+    const type = flag.user_correction ?? "other";
+    flagsByType[type] = (flagsByType[type] ?? 0) + 1;
+  }
+
+  const recentFlags = (flagsRes.data ?? []).map((f) => ({
+    created_at: f.created_at,
+    industry_detected: f.industry_detected,
+    original_status: f.original_status,
+    user_correction: f.user_correction,
+    item_description_spec: f.item_description_spec,
+    user_note: f.user_note,
+  }));
+
+  // UTM breakdown
+  const utmBySource: Record<string, number> = {};
+  const utmByCampaign: Record<string, number> = {};
+  for (const log of utmLogsRes.data ?? []) {
+    if (log.utm_source) {
+      utmBySource[log.utm_source] = (utmBySource[log.utm_source] ?? 0) + 1;
+    }
+    if (log.utm_campaign) {
+      utmByCampaign[log.utm_campaign] = (utmByCampaign[log.utm_campaign] ?? 0) + 1;
+    }
+  }
+
+  // Feature adoption
+  const specUsers = new Set((specsRes.data ?? []).map((s) => s.user_id));
+
   // Conversion funnel
   const totalDemos = totalDemosRes.count ?? 0;
   const totalSignups = totalUsersRes.count ?? 0;
@@ -170,6 +253,25 @@ export async function GET() {
       demos: totalDemos,
       signups: totalSignups,
       paid: totalPaid,
+    },
+    industry_breakdown: industryBreakdown,
+    flags: {
+      total: flagsCountRes.count ?? 0,
+      by_type: flagsByType,
+      recent: recentFlags,
+    },
+    utm: {
+      by_source: Object.entries(utmBySource)
+        .map(([source, count]) => ({ source, count }))
+        .sort((a, b) => b.count - a.count),
+      by_campaign: Object.entries(utmByCampaign)
+        .map(([campaign, count]) => ({ campaign, count }))
+        .sort((a, b) => b.count - a.count),
+    },
+    feature_adoption: {
+      pdf_downloads: pdfDownloadsRes.count ?? 0,
+      total_specs: specsRes.data?.length ?? 0,
+      users_with_specs: specUsers.size,
     },
   });
 }

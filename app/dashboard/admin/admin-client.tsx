@@ -24,6 +24,10 @@ import {
   Activity,
   TrendingUp,
   RefreshCw,
+  FileDown,
+  FolderOpen,
+  Flag,
+  Globe,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -65,12 +69,57 @@ interface FunnelData {
   paid: number;
 }
 
+interface IndustryItem {
+  industry: string;
+  count: number;
+}
+
+interface RecentFlag {
+  created_at: string;
+  industry_detected: string | null;
+  original_status: string;
+  user_correction: string;
+  item_description_spec: string;
+  user_note: string | null;
+}
+
+interface FlagsData {
+  total: number;
+  by_type: Record<string, number>;
+  recent: RecentFlag[];
+}
+
+interface UtmSourceItem {
+  source: string;
+  count: number;
+}
+
+interface UtmCampaignItem {
+  campaign: string;
+  count: number;
+}
+
+interface UtmData {
+  by_source: UtmSourceItem[];
+  by_campaign: UtmCampaignItem[];
+}
+
+interface FeatureAdoptionData {
+  pdf_downloads: number;
+  total_specs: number;
+  users_with_specs: number;
+}
+
 interface AdminStats {
   overview: OverviewData;
   daily_chart: DailyChartPoint[];
   recent_logs: RecentLog[];
   users: UserRow[];
   funnel: FunnelData;
+  industry_breakdown: IndustryItem[];
+  flags: FlagsData;
+  utm: UtmData;
+  feature_adoption: FeatureAdoptionData;
 }
 
 export function AdminDashboardClient() {
@@ -170,14 +219,71 @@ export function AdminDashboardClient() {
         </CardContent>
       </Card>
 
-      {/* Conversion Funnel */}
+      {/* Two-column: Conversion Funnel + Industry Breakdown */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Conversion Funnel</CardTitle>
+            <CardDescription>Anonymous demos to sign-ups to paid</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ConversionFunnel funnel={stats.funnel} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Industry Breakdown</CardTitle>
+            <CardDescription>Validations by detected industry</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <IndustryBreakdown data={stats.industry_breakdown} />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Two-column: UTM / Traffic Sources + Feature Adoption */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="h-4 w-4" />
+              Traffic Sources (UTM)
+            </CardTitle>
+            <CardDescription>Campaign tracking breakdown</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <UtmSection utm={stats.utm} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Feature Adoption</CardTitle>
+            <CardDescription>Usage of key platform features</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <FeatureAdoption
+              data={stats.feature_adoption}
+              totalUsers={stats.overview.total_users}
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* AI Accuracy / Flags */}
       <Card>
         <CardHeader>
-          <CardTitle>Conversion Funnel</CardTitle>
-          <CardDescription>Anonymous demos to sign-ups to paid</CardDescription>
+          <CardTitle className="flex items-center gap-2">
+            <Flag className="h-4 w-4" />
+            AI Accuracy Flags
+          </CardTitle>
+          <CardDescription>
+            User-reported corrections — {stats.flags.total} total flags
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <ConversionFunnel funnel={stats.funnel} />
+          <FlagsSection flags={stats.flags} />
         </CardContent>
       </Card>
 
@@ -226,17 +332,17 @@ export function AdminDashboardClient() {
                         </Badge>
                       </TableCell>
                       <TableCell className="max-w-[120px] truncate font-mono text-xs text-muted-foreground">
-                        {log.session_id ? log.session_id.slice(0, 8) + "..." : "—"}
+                        {log.session_id ? log.session_id.slice(0, 8) + "..." : "\u2014"}
                       </TableCell>
                       <TableCell className="text-sm">
                         {log.user_email ?? "Anonymous"}
                       </TableCell>
                       <TableCell className="text-right text-sm">{log.items_validated}</TableCell>
                       <TableCell className="text-right text-sm">
-                        {log.processing_time_ms ? `${(log.processing_time_ms / 1000).toFixed(1)}s` : "—"}
+                        {log.processing_time_ms ? `${(log.processing_time_ms / 1000).toFixed(1)}s` : "\u2014"}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
-                        {log.source ?? "—"}
+                        {log.source ?? "\u2014"}
                       </TableCell>
                     </TableRow>
                   ))
@@ -348,7 +454,6 @@ function UsageChart({ data }: { data: DailyChartPoint[] }) {
 
   return (
     <div className="space-y-3">
-      {/* Legend */}
       <div className="flex items-center gap-4 text-sm">
         <div className="flex items-center gap-1.5">
           <div className="h-3 w-3 rounded-sm bg-blue-500" />
@@ -360,7 +465,6 @@ function UsageChart({ data }: { data: DailyChartPoint[] }) {
         </div>
       </div>
 
-      {/* Bar chart */}
       <div className="flex items-end gap-[2px]" style={{ height: 180 }}>
         {data.map((d) => {
           const demoH = (d.demo / maxVal) * 160;
@@ -372,7 +476,6 @@ function UsageChart({ data }: { data: DailyChartPoint[] }) {
               className="group relative flex flex-1 flex-col items-stretch justify-end"
               style={{ height: 180 }}
             >
-              {/* Tooltip */}
               <div className="pointer-events-none absolute -top-8 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded bg-slate-900 px-2 py-1 text-xs text-white shadow group-hover:block">
                 {d.date}: {total} ({d.demo}D / {d.authenticated}A)
               </div>
@@ -389,7 +492,6 @@ function UsageChart({ data }: { data: DailyChartPoint[] }) {
         })}
       </div>
 
-      {/* X-axis labels (show every 5th) */}
       <div className="flex gap-[2px]">
         {data.map((d, i) => (
           <div key={d.date} className="flex-1 text-center text-[9px] text-muted-foreground">
@@ -442,6 +544,232 @@ function ConversionFunnel({ funnel }: { funnel: FunnelData }) {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+const INDUSTRY_COLORS = [
+  "bg-blue-500",
+  "bg-emerald-500",
+  "bg-amber-500",
+  "bg-purple-500",
+  "bg-rose-500",
+  "bg-cyan-500",
+  "bg-orange-500",
+  "bg-indigo-500",
+];
+
+function IndustryBreakdown({ data }: { data: IndustryItem[] }) {
+  if (data.length === 0) {
+    return <p className="text-sm text-muted-foreground">No industry data yet</p>;
+  }
+
+  const maxCount = Math.max(...data.map((d) => d.count), 1);
+  const total = data.reduce((sum, d) => sum + d.count, 0);
+
+  return (
+    <div className="space-y-3">
+      {data.map((item, i) => {
+        const widthPct = Math.max((item.count / maxCount) * 100, 4);
+        const pct = ((item.count / total) * 100).toFixed(1);
+        return (
+          <div key={item.industry} className="space-y-1">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium text-foreground">{item.industry}</span>
+              <span className="text-muted-foreground">
+                {item.count.toLocaleString()} ({pct}%)
+              </span>
+            </div>
+            <div className="h-5 w-full overflow-hidden rounded-md bg-muted">
+              <div
+                className={`h-full rounded-md ${INDUSTRY_COLORS[i % INDUSTRY_COLORS.length]} transition-all`}
+                style={{ width: `${widthPct}%` }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function UtmSection({ utm }: { utm: UtmData }) {
+  const hasData = utm.by_source.length > 0 || utm.by_campaign.length > 0;
+
+  if (!hasData) {
+    return (
+      <div className="py-4 text-center text-sm text-muted-foreground">
+        No UTM data yet. Add <code className="rounded bg-muted px-1 py-0.5 text-xs">?utm_source=...</code> to your landing page links.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {utm.by_source.length > 0 && (
+        <div>
+          <h4 className="mb-2 text-sm font-medium text-foreground">By Source</h4>
+          <div className="space-y-2">
+            {utm.by_source.map((s) => (
+              <div key={s.source} className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{s.source}</span>
+                <Badge variant="secondary">{s.count}</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {utm.by_campaign.length > 0 && (
+        <div>
+          <h4 className="mb-2 text-sm font-medium text-foreground">By Campaign</h4>
+          <div className="space-y-2">
+            {utm.by_campaign.map((c) => (
+              <div key={c.campaign} className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{c.campaign}</span>
+                <Badge variant="secondary">{c.count}</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FeatureAdoption({
+  data,
+  totalUsers,
+}: {
+  data: FeatureAdoptionData;
+  totalUsers: number;
+}) {
+  const specAdoptionPct =
+    totalUsers > 0 ? ((data.users_with_specs / totalUsers) * 100).toFixed(0) : "0";
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between rounded-lg border border-border p-3">
+        <div className="flex items-center gap-2">
+          <FileDown className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium">PDF Downloads</span>
+        </div>
+        <span className="text-lg font-bold text-primary">{data.pdf_downloads.toLocaleString()}</span>
+      </div>
+      <div className="flex items-center justify-between rounded-lg border border-border p-3">
+        <div className="flex items-center gap-2">
+          <FolderOpen className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium">Saved Specs</span>
+        </div>
+        <span className="text-lg font-bold text-primary">{data.total_specs}</span>
+      </div>
+      <div className="flex items-center justify-between rounded-lg border border-border p-3">
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium">Users with Specs</span>
+        </div>
+        <span className="text-sm text-muted-foreground">
+          {data.users_with_specs} of {totalUsers} ({specAdoptionPct}%)
+        </span>
+      </div>
+    </div>
+  );
+}
+
+const FLAG_LABELS: Record<string, string> = {
+  should_be_match: "Should be Match",
+  should_be_mismatch: "Should be Mismatch",
+  wrong_quantity: "Wrong Quantity",
+  duplicated: "Duplicated",
+  other: "Other",
+};
+
+const FLAG_COLORS: Record<string, string> = {
+  should_be_match: "bg-amber-500",
+  should_be_mismatch: "bg-rose-500",
+  wrong_quantity: "bg-purple-500",
+  duplicated: "bg-cyan-500",
+  other: "bg-slate-500",
+};
+
+function FlagsSection({ flags }: { flags: FlagsData }) {
+  if (flags.total === 0) {
+    return <p className="text-sm text-muted-foreground">No flags submitted yet</p>;
+  }
+
+  const maxTypeCount = Math.max(...Object.values(flags.by_type), 1);
+
+  return (
+    <div className="space-y-6">
+      {/* Type breakdown */}
+      <div>
+        <h4 className="mb-3 text-sm font-medium text-foreground">Flags by Correction Type</h4>
+        <div className="space-y-2">
+          {Object.entries(flags.by_type).map(([type, count]) => {
+            const widthPct = Math.max((count / maxTypeCount) * 100, 4);
+            return (
+              <div key={type} className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">{FLAG_LABELS[type] ?? type}</span>
+                  <span className="font-medium text-foreground">{count}</span>
+                </div>
+                <div className="h-4 w-full overflow-hidden rounded bg-muted">
+                  <div
+                    className={`h-full rounded ${FLAG_COLORS[type] ?? "bg-slate-500"} transition-all`}
+                    style={{ width: `${widthPct}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Recent flags table */}
+      {flags.recent.length > 0 && (
+        <div>
+          <h4 className="mb-3 text-sm font-medium text-foreground">Recent Flags</h4>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Industry</TableHead>
+                  <TableHead>Original</TableHead>
+                  <TableHead>Correction</TableHead>
+                  <TableHead>Spec Item</TableHead>
+                  <TableHead>Note</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {flags.recent.map((f, i) => (
+                  <TableRow key={i}>
+                    <TableCell className="whitespace-nowrap text-xs">
+                      {new Date(f.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="text-xs">
+                        {f.industry_detected ?? "N/A"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs">{f.original_status}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="text-xs">
+                        {FLAG_LABELS[f.user_correction] ?? f.user_correction}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate text-xs">
+                      {f.item_description_spec}
+                    </TableCell>
+                    <TableCell className="max-w-[150px] truncate text-xs text-muted-foreground">
+                      {f.user_note ?? "\u2014"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

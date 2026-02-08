@@ -8,6 +8,9 @@ interface LogParams {
   isDemo: boolean;
   source?: string | null;
   processingTimeMs?: number | null;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
 }
 
 /**
@@ -21,6 +24,9 @@ export async function logValidation({
   isDemo,
   source,
   processingTimeMs,
+  utmSource,
+  utmMedium,
+  utmCampaign,
 }: LogParams): Promise<void> {
   const criticalCount =
     (result.mismatches?.filter((m) => m.severity === "CRITICAL").length ?? 0) +
@@ -41,5 +47,8 @@ export async function logValidation({
     validation_status: result.summary.validation_status,
     is_demo: isDemo,
     source: source ?? null,
+    utm_source: utmSource ?? null,
+    utm_medium: utmMedium ?? null,
+    utm_campaign: utmCampaign ?? null,
   });
 }

@@ -211,6 +211,13 @@ export function PdfDownloadButton({ validation, result }: PdfDownloadButtonProps
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+
+      // Fire-and-forget PDF download tracking
+      fetch("/api/track/pdf-download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ industry: result.industry_detected }),
+      }).catch(() => {});
     } catch (error) {
       console.error("PDF generation error:", error);
     } finally {

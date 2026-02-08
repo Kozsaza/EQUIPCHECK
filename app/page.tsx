@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { FlagModal } from "@/components/flag-modal";
 import { SignInNudge } from "@/components/signin-nudge";
-import { getSessionId } from "@/lib/session-id";
+import { getSessionId, getUtmParams } from "@/lib/session-id";
 import type { ValidationResult } from "@/types";
 import {
   Check,
@@ -236,6 +236,7 @@ function SampleDemoContent({
           industry: selectedIndustry,
           session_id: getSessionId(),
           source: source || undefined,
+          ...getUtmParams(),
         }),
       });
 
@@ -432,6 +433,10 @@ function UploadDemoContent({
       else formData.append("equipmentText", equipText);
       formData.append("session_id", getSessionId());
       if (source) formData.append("source", source);
+      const utm = getUtmParams();
+      if (utm.utm_source) formData.append("utm_source", utm.utm_source);
+      if (utm.utm_medium) formData.append("utm_medium", utm.utm_medium);
+      if (utm.utm_campaign) formData.append("utm_campaign", utm.utm_campaign);
 
       const res = await fetch("/api/validate-upload", {
         method: "POST",
