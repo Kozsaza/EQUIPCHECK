@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, ExternalLink } from "lucide-react";
 import type { Profile } from "@/types";
 
 const plans = [
@@ -64,6 +64,7 @@ function BillingContent() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
 
   const success = searchParams.get("success");
   const canceled = searchParams.get("canceled");
@@ -84,6 +85,19 @@ function BillingContent() {
     }
     load();
   }, [supabase]);
+
+  async function handleManageBilling() {
+    setPortalLoading(true);
+    try {
+      const res = await fetch("/api/create-billing-portal", { method: "POST" });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      setPortalLoading(false);
+    }
+  }
 
   async function handleUpgrade(plan: "professional" | "business") {
     setCheckoutLoading(plan);
@@ -153,6 +167,21 @@ function BillingContent() {
               <p className="mt-1 text-lg font-semibold text-primary">{profile?.validations_this_month ?? 0}</p>
             </div>
           </div>
+          {currentPlan !== "free" && profile?.stripe_customer_id && (
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={handleManageBilling}
+              disabled={portalLoading}
+            >
+              {portalLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <ExternalLink className="mr-2 h-4 w-4" />
+              )}
+              Manage Subscription
+            </Button>
+          )}
         </CardContent>
       </Card>
 
