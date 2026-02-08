@@ -1,7 +1,14 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { ValidationResult } from "@/types";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+let _genAI: GoogleGenerativeAI | null = null;
+
+function getGenAI(): GoogleGenerativeAI {
+  if (!_genAI) {
+    _genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+  }
+  return _genAI;
+}
 
 /* ─────────────────────── PASS 1: VALIDATION PROMPT (ENHANCED) ─────────────────────── */
 
@@ -351,7 +358,7 @@ VALUE ESTIMATE RULES:
 /* ─────────────────────── GEMINI API CALL ─────────────────────── */
 
 async function callGemini(prompt: string): Promise<string> {
-  const model = genAI.getGenerativeModel({
+  const model = getGenAI().getGenerativeModel({
     model: "gemini-1.5-flash",
     generationConfig: {
       temperature: 0,
