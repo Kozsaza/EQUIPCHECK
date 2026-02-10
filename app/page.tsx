@@ -1606,7 +1606,8 @@ function Footer() {
             Company
           </h4>
           <nav className="mt-4 flex flex-col gap-2">
-            <a href="mailto:contact@equipcheck.app" className="text-sm text-slate-500 hover:text-white">Contact</a>
+            <a href="mailto:contact@equipcheck.app" className="text-sm text-slate-500 hover:text-white">contact@equipcheck.app</a>
+            <a href="mailto:sales@equipcheck.app" className="text-sm text-slate-500 hover:text-white">sales@equipcheck.app</a>
             <a href="#security" className="text-sm text-slate-500 hover:text-white">Security</a>
           </nav>
         </div>

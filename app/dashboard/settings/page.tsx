@@ -121,6 +121,33 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Support</CardTitle>
+          <CardDescription>Need help? Get in touch with our team</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-center justify-between rounded-lg border border-border p-3">
+            <div>
+              <p className="text-sm font-medium text-foreground">General Support</p>
+              <p className="text-sm text-muted-foreground">support@equipcheck.app</p>
+            </div>
+            <Button variant="outline" size="sm" asChild>
+              <a href="mailto:support@equipcheck.app">Email</a>
+            </Button>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-border p-3">
+            <div>
+              <p className="text-sm font-medium text-foreground">Sales & Upgrades</p>
+              <p className="text-sm text-muted-foreground">sales@equipcheck.app</p>
+            </div>
+            <Button variant="outline" size="sm" asChild>
+              <a href="mailto:sales@equipcheck.app">Email</a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       <Separator />
 
       <Card className="border-destructive/30">

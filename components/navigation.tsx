@@ -16,6 +16,8 @@ import {
   Menu,
   X,
   ShieldCheck,
+  Home,
+  HelpCircle,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -28,8 +30,6 @@ const navItems = [
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
-const ADMIN_EMAIL = "admin@test.com";
-
 export function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
@@ -38,10 +38,12 @@ export function Navigation() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user?.email === ADMIN_EMAIL) setIsAdmin(true);
-    });
-  }, [supabase]);
+    fetch("/api/admin/stats", { method: "GET" })
+      .then((res) => {
+        if (res.ok) setIsAdmin(true);
+      })
+      .catch(() => {});
+  }, []);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -124,7 +126,22 @@ export function Navigation() {
           )}
         </nav>
 
-        <div className="border-t border-white/10 p-3">
+        <div className="border-t border-white/10 p-3 space-y-1">
+          <Link
+            href="/"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <Home className="h-4 w-4" />
+            Homepage
+          </Link>
+          <a
+            href="mailto:support@equipcheck.app"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <HelpCircle className="h-4 w-4" />
+            Support
+          </a>
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-slate-400 hover:bg-white/10 hover:text-white"
