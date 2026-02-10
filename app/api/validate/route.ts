@@ -123,8 +123,33 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Validation error:", error);
+    const message = error instanceof Error ? error.message : "";
+
+    if (message === "AI_KEY_ERROR") {
+      return NextResponse.json(
+        {
+          error: "Our validation engine is temporarily unavailable. Please try again in a few minutes.",
+          code: "SERVICE_UNAVAILABLE",
+        },
+        { status: 503 }
+      );
+    }
+
+    if (message === "AI_MAX_RETRIES") {
+      return NextResponse.json(
+        {
+          error: "High demand right now. Please wait 30 seconds and try again.",
+          code: "RATE_LIMITED",
+        },
+        { status: 429 }
+      );
+    }
+
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Validation failed" },
+      {
+        error: "Something went wrong with the validation. Please try again.",
+        code: "INTERNAL_ERROR",
+      },
       { status: 500 }
     );
   }
