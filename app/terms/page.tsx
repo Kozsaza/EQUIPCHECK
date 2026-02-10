@@ -135,7 +135,7 @@ export default function TermsOfServicePage() {
           <h2>14. Contact Us</h2>
           <p>
             If you have any questions about these Terms, please contact us at{" "}
-            <a href="mailto:legal@equipcheck.io">legal@equipcheck.io</a>.
+            <a href="mailto:support@equipcheck.app">support@equipcheck.app</a>.
           </p>
         </div>
       </main>

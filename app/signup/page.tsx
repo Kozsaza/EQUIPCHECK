@@ -49,6 +49,13 @@ export default function SignupPage() {
       return;
     }
 
+    // Send welcome email (fire-and-forget)
+    fetch("/api/send-welcome", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }).catch(() => {});
+
     router.push("/dashboard");
     router.refresh();
   }

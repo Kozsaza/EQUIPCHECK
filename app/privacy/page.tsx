@@ -117,7 +117,7 @@ export default function PrivacyPolicyPage() {
           <h2>10. Contact Us</h2>
           <p>
             If you have any questions about this Privacy Policy, please contact us at{" "}
-            <a href="mailto:privacy@equipcheck.io">privacy@equipcheck.io</a>.
+            <a href="mailto:support@equipcheck.app">support@equipcheck.app</a>.
           </p>
         </div>
       </main>

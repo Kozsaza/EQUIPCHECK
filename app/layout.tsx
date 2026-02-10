@@ -19,7 +19,7 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://equipcheck.io";
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://equipcheck.app";
 
 export const metadata: Metadata = {
   title: "EquipCheck — AI Equipment Validation for Field Service Teams",

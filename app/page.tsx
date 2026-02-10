@@ -1468,7 +1468,7 @@ function PricingSection() {
             asChild
             className="shrink-0 border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10"
           >
-            <a href="mailto:sales@equipcheck.io">
+            <a href="mailto:sales@equipcheck.app">
               Contact Sales <ArrowRight className="ml-1.5 h-4 w-4" />
             </a>
           </Button>
@@ -1606,7 +1606,7 @@ function Footer() {
             Company
           </h4>
           <nav className="mt-4 flex flex-col gap-2">
-            <a href="mailto:hello@equipcheck.io" className="text-sm text-slate-500 hover:text-white">Contact</a>
+            <a href="mailto:contact@equipcheck.app" className="text-sm text-slate-500 hover:text-white">Contact</a>
             <a href="#security" className="text-sm text-slate-500 hover:text-white">Security</a>
           </nav>
         </div>
