@@ -10,6 +10,17 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // Send welcome email after successful email confirmation (fire-and-forget)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) {
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || origin;
+        fetch(`${appUrl}/api/send-welcome`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: user.email }),
+        }).catch(() => {});
+      }
+
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

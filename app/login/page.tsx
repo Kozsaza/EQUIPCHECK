@@ -26,12 +26,15 @@ function LoginPageInner() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(callbackError);
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setResendMessage(null);
     setLoading(true);
 
     const { error } = await supabase.auth.signInWithPassword({
@@ -47,6 +50,30 @@ function LoginPageInner() {
 
     router.push("/dashboard");
     router.refresh();
+  }
+
+  async function handleResendConfirmation() {
+    if (!email) {
+      setError("Please enter your email address first.");
+      return;
+    }
+    setResendLoading(true);
+    setResendMessage(null);
+
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    setResendLoading(false);
+    if (error) {
+      setError("Failed to resend confirmation email. Please try again.");
+    } else {
+      setResendMessage("Confirmation email sent! Please check your inbox.");
+    }
   }
 
   return (
@@ -69,6 +96,26 @@ function LoginPageInner() {
               {error && (
                 <Alert variant="destructive">
                   <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              {error?.toLowerCase().includes("not confirmed") && (
+                <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-center dark:border-blue-800 dark:bg-blue-950/30">
+                  <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
+                    Please check your email for a confirmation link.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleResendConfirmation}
+                    disabled={resendLoading}
+                    className="text-sm font-medium text-blue-600 hover:text-blue-800 underline underline-offset-4 dark:text-blue-400 dark:hover:text-blue-200 disabled:opacity-50"
+                  >
+                    {resendLoading ? "Sending..." : "Resend confirmation email"}
+                  </button>
+                </div>
+              )}
+              {resendMessage && (
+                <Alert>
+                  <AlertDescription className="text-green-700 dark:text-green-400">{resendMessage}</AlertDescription>
                 </Alert>
               )}
               <div className="space-y-2">
