@@ -138,7 +138,7 @@ export function PdfDownloadButton({ validation, result, plan = "free" }: PdfDown
                     <Text style={styles.col1}>{m.equipment_item}</Text>
                     <Text style={styles.col2}>{m.spec_item}</Text>
                     <Text style={styles.col3}>
-                      {m.match_type} {m.quantity_match ? "" : `(Qty: ${m.equipment_qty}/${m.spec_qty})`}
+                      {m.match_type}{m.verified ? " (Verified)" : ""} {m.quantity_match ? "" : `(Qty: ${m.equipment_qty}/${m.spec_qty})`}
                     </Text>
                     <Text style={styles.col4}>{m.notes}</Text>
                   </View>

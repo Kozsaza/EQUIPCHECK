@@ -7,8 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Check, Loader2, ExternalLink } from "lucide-react";
+import { Check, Loader2, ExternalLink, ArrowRight } from "lucide-react";
 import type { Profile } from "@/types";
+
+function daysRemaining(trialEnd: string): number {
+  const end = new Date(trialEnd);
+  const now = new Date();
+  const diff = end.getTime() - now.getTime();
+  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 const plans = [
   {
@@ -16,22 +31,29 @@ const plans = [
     name: "Free",
     price: "$0",
     period: "forever",
-    validations: "3/month",
-    features: ["3 validations/month", "1 saved spec", "Basic matching"],
+    features: [
+      "3 validations/month",
+      "1 saved spec",
+      "AI-powered matching",
+      "CSV & Excel upload",
+    ],
+    trial: false,
   },
   {
     id: "professional" as const,
     name: "Professional",
     price: "$149",
     period: "/month",
-    validations: "75/month",
     features: [
       "75 validations/month",
       "Unlimited saved specs",
-      "Dual-pass verification",
+      "3-stage verified matching",
       "PDF export",
+      "CSV, Excel & PDF input",
+      "Spec library",
       "Email support",
     ],
+    trial: true,
     popular: true,
   },
   {
@@ -39,14 +61,14 @@ const plans = [
     name: "Business",
     price: "$299",
     period: "/month",
-    validations: "Unlimited",
     features: [
       "Unlimited validations",
       "Everything in Professional",
-      "Team seats (5)",
+      "Team seats (up to 5) \u2014 launching soon",
+      "Basic custom matching rules \u2014 launching soon",
       "Priority support",
-      "API access",
     ],
+    trial: true,
   },
 ];
 
@@ -68,6 +90,7 @@ function BillingContent() {
 
   const success = searchParams.get("success");
   const canceled = searchParams.get("canceled");
+  const isTrial = searchParams.get("trial");
 
   useEffect(() => {
     async function load() {
@@ -123,6 +146,8 @@ function BillingContent() {
   }
 
   const currentPlan = profile?.plan ?? "free";
+  const trialEnd = profile?.trial_end;
+  const isTrialing = trialEnd && new Date(trialEnd) > new Date();
 
   return (
     <div className="space-y-6">
@@ -133,7 +158,15 @@ function BillingContent() {
         </p>
       </div>
 
-      {success && (
+      {success && isTrial && (
+        <Alert variant="success">
+          <AlertDescription>
+            Your 14-day free trial has started! You have full access to all {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)} features.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {success && !isTrial && (
         <Alert variant="success">
           <AlertDescription>
             Subscription activated successfully! Your plan has been updated.
@@ -149,6 +182,19 @@ function BillingContent() {
         </Alert>
       )}
 
+      {/* Trial status banner */}
+      {isTrialing && trialEnd && (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <p className="font-medium text-blue-800">
+            You&rsquo;re on a 14-day free trial of the {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)} plan
+          </p>
+          <p className="mt-1 text-sm text-blue-600">
+            {daysRemaining(trialEnd)} days remaining &mdash;
+            your card won&rsquo;t be charged until {formatDate(trialEnd)}
+          </p>
+        </div>
+      )}
+
       {/* Current Usage */}
       <Card className="gap-3">
         <CardHeader>
@@ -160,6 +206,7 @@ function BillingContent() {
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Current Plan</p>
               <Badge variant="secondary" className="mt-1.5">
                 {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}
+                {isTrialing && " (Trial)"}
               </Badge>
             </div>
             <div>
@@ -215,6 +262,11 @@ function BillingContent() {
                     </li>
                   ))}
                 </ul>
+                {plan.trial && (
+                  <p className="mt-3 text-center text-xs font-medium text-blue-600">
+                    14-day free trial &mdash; no charge until day 15
+                  </p>
+                )}
               </CardContent>
               <CardFooter>
                 {isCurrent ? (
@@ -235,7 +287,7 @@ function BillingContent() {
                     {checkoutLoading === plan.id ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     ) : null}
-                    {currentPlan === "free" ? "Upgrade" : "Switch"} to {plan.name}
+                    {plan.trial ? "Start Free Trial" : currentPlan === "free" ? "Upgrade" : "Switch"} to {plan.name}
                   </Button>
                 )}
               </CardFooter>
@@ -243,6 +295,28 @@ function BillingContent() {
           );
         })}
       </div>
+
+      {/* Enterprise banner */}
+      <Card className="bg-[#1E293B] text-white">
+        <CardContent className="flex flex-col items-center justify-between gap-4 pt-6 sm:flex-row">
+          <div>
+            <h3 className="text-lg font-bold">Enterprise</h3>
+            <p className="text-sm text-slate-300">Custom pricing</p>
+            <p className="mt-1 text-sm text-slate-400">
+              Custom rules, dedicated onboarding, SLA, and volume pricing for teams of 10+.
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            asChild
+            className="shrink-0 border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10"
+          >
+            <a href="mailto:support@equipcheck.app?subject=EquipCheck%20Enterprise%20Inquiry&body=Hi%20Zach%2C%0A%0AI'm%20interested%20in%20learning%20more%20about%20EquipCheck%20Enterprise%20for%20my%20team.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0ACurrent%20validation%20volume%3A%20%0A%0AThanks!">
+              Contact Sales <ArrowRight className="ml-1.5 h-4 w-4" />
+            </a>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

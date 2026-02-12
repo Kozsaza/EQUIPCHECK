@@ -139,10 +139,10 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between rounded-lg border border-border p-3">
             <div>
               <p className="text-sm font-medium text-foreground">Sales & Upgrades</p>
-              <p className="text-sm text-muted-foreground">sales@equipcheck.app</p>
+              <p className="text-sm text-muted-foreground">support@equipcheck.app</p>
             </div>
             <Button variant="outline" size="sm" asChild>
-              <a href="mailto:sales@equipcheck.app">Email</a>
+              <a href="mailto:support@equipcheck.app?subject=EquipCheck%20Enterprise%20Inquiry&body=Hi%20Zach%2C%0A%0AI'm%20interested%20in%20learning%20more%20about%20EquipCheck%20Enterprise%20for%20my%20team.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0ACurrent%20validation%20volume%3A%20%0A%0AThanks!">Email</a>
             </Button>
           </div>
         </CardContent>

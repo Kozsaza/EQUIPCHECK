@@ -769,7 +769,7 @@ function ResultsSection({
             <p className="mt-2 text-xs text-slate-400">
               Confidence: <span className={`font-semibold ${result.overall_confidence === "HIGH" ? "text-emerald-600" : result.overall_confidence === "MEDIUM" ? "text-amber-600" : "text-red-500"}`}>{result.overall_confidence}</span>
               {result.verification_status && result.verification_status !== "SINGLE_PASS" && (
-                <> &middot; Dual-pass {result.verification_status === "CONFIRMED" ? "verified" : "reviewed"}</>
+                <> &middot; {result.verification_status === "CORRECTIONS_MADE" ? "Verification complete (corrections applied)" : "Verification complete"}</>
               )}
             </p>
           )}
@@ -802,7 +802,7 @@ function ResultsSection({
           </Button>
         </div>
         <p className="mt-3 text-center text-sm text-slate-500">
-          Create a free account to save your specs, run 3 validations per month, and export PDF reports.
+          Create a free account to save your specs and run 3 validations per month.
         </p>
       </div>
 
@@ -937,8 +937,8 @@ const steps = [
   },
   {
     num: "03",
-    title: "Get Your Verified Report",
-    body: "Our dual-pass AI compares every line item across both documents. You get a color-coded report \u2014 matches, mismatches, missing items, and quantity errors \u2014 ready to download as PDF.",
+    title: "Get Your Validated Report",
+    body: "EquipCheck\u2019s AI compares every line item across both documents. You get a color-coded report \u2014 matches, mismatches, missing items, and quantity errors. Paid plans add a second verification pass and PDF export.",
   },
 ];
 
@@ -986,12 +986,16 @@ function HowItWorksSection() {
 function AccuracySection() {
   const features = [
     {
-      title: "Pass 1 \u2014 Validation",
-      body: "AI analyzes both documents, detects your industry, and compares every line item accounting for abbreviations, unit conversions, and naming variations.",
+      title: "Deterministic Parsing",
+      body: "Before AI touches your data, EquipCheck normalizes part numbers, expands abbreviations, and structures both documents \u2014 zero hallucination risk in the data extraction step.",
     },
     {
-      title: "Pass 2 \u2014 Verification",
-      body: "A second AI pass reviews every result from Pass 1 against the original source data. Catches AI errors before you see them.",
+      title: "Industry-Aware Comparison",
+      body: "AI compares every line item using built-in knowledge of industry standards \u2014 NEC codes, ASHRAE terms, security specs, and construction hardware \u2014 so \u201c1P 20A CB\u201d matches \u201cSingle Pole 20 Amp Circuit Breaker.\u201d",
+    },
+    {
+      title: "Verification Pass (Professional & Business)",
+      body: "A second AI pass re-examines every flagged item against the original source data. Catches false positives before you see them \u2014 abbreviation misreads, format differences, and near-matches.",
     },
     {
       title: "Confidence Scoring",
@@ -1010,7 +1014,7 @@ function AccuracySection() {
           Built for Accuracy
         </p>
         <h2 className="mt-3 font-display text-3xl font-bold text-slate-900 sm:text-4xl">
-          Dual-pass AI verification. Not a glorified VLOOKUP.
+          Industry-aware AI validation. Not a glorified VLOOKUP.
         </h2>
         <p className="mt-4 max-w-2xl text-lg text-slate-600">
           A spreadsheet formula can match exact strings. EquipCheck understands
@@ -1050,30 +1054,40 @@ function AccuracySection() {
               <div className="h-6 w-0.5 bg-blue-300" />
               <ChevronDown className="h-4 w-4 text-blue-500" />
 
-              {/* Pass 1 */}
+              {/* Stage 1: Parser */}
+              <div className="w-56 rounded-lg border-2 border-slate-400 bg-slate-50 p-4">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-600">Stage 1</p>
+                <p className="text-sm font-medium text-slate-700">Smart Parsing</p>
+                <p className="mt-0.5 text-xs text-slate-500">Normalize &amp; structure data</p>
+              </div>
+              <div className="h-6 w-0.5 bg-blue-400" />
+              <ChevronDown className="h-4 w-4 text-blue-500" />
+
+              {/* Stage 2: Comparison */}
               <div className="w-56 rounded-lg border-2 border-blue-500 bg-blue-50 p-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-blue-600">Pass 1</p>
-                <p className="text-sm font-medium text-slate-700">Validation Engine</p>
-                <p className="mt-0.5 text-xs text-slate-500">Industry-aware comparison</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-blue-600">Stage 2</p>
+                <p className="text-sm font-medium text-slate-700">AI Comparison</p>
+                <p className="mt-0.5 text-xs text-slate-500">Industry-aware matching</p>
               </div>
               <div className="h-6 w-0.5 bg-blue-400" />
               <ChevronDown className="h-4 w-4 text-blue-600" />
 
-              {/* Pass 2 */}
-              <div className="w-56 rounded-lg border-2 border-blue-600 bg-blue-50 p-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Pass 2</p>
+              {/* Stage 3: Verification (paid) */}
+              <div className="w-56 rounded-lg border-2 border-dashed border-blue-600 bg-blue-50 p-4">
+                <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Stage 3</p>
                 <p className="text-sm font-medium text-slate-700">Verification</p>
-                <p className="mt-0.5 text-xs text-slate-500">Error checking & confidence scoring</p>
+                <p className="mt-0.5 text-xs text-slate-500">Self-check flagged items</p>
+                <p className="mt-1 rounded bg-blue-100 px-1.5 py-0.5 text-center text-[10px] font-semibold text-blue-700">Professional &amp; Business</p>
               </div>
               <div className="h-6 w-0.5 bg-emerald-400" />
               <ChevronDown className="h-4 w-4 text-emerald-500" />
 
-              {/* Verified Report */}
+              {/* Final Report */}
               <div className="flex w-56 items-center gap-3 rounded-lg border-2 border-emerald-500 bg-emerald-50 p-4">
                 <CheckCircle className="h-5 w-5 shrink-0 text-emerald-600" />
                 <div>
-                  <p className="text-sm font-medium text-emerald-800">Verified Report</p>
-                  <p className="text-xs text-emerald-600">Download as PDF</p>
+                  <p className="text-sm font-medium text-emerald-800">Validation Report</p>
+                  <p className="text-xs text-emerald-600">Color-coded results</p>
                 </div>
               </div>
             </div>
@@ -1345,10 +1359,11 @@ const plans = [
     features: [
       "3 validations/month",
       "1 saved spec",
-      "Single-pass matching",
-      "CSV & Excel",
+      "AI-powered matching",
+      "CSV & Excel upload",
     ],
     cta: "Get Started",
+    trial: false,
     popular: false,
   },
   {
@@ -1358,13 +1373,14 @@ const plans = [
     features: [
       "75 validations/month",
       "Unlimited saved specs",
-      "Dual-pass verification",
+      "3-stage verified matching",
       "PDF export",
       "CSV, Excel & PDF input",
       "Spec library",
       "Email support",
     ],
     cta: "Start Free Trial",
+    trial: true,
     popular: true,
   },
   {
@@ -1374,12 +1390,12 @@ const plans = [
     features: [
       "Unlimited validations",
       "Everything in Professional",
-      "Team seats (5)",
+      "Team seats (up to 5 users)",
+      "Basic custom matching rules",
       "Priority support",
-      "API access",
-      "Custom rules (coming soon)",
     ],
     cta: "Start Free Trial",
+    trial: true,
     popular: false,
   },
 ];
@@ -1395,10 +1411,12 @@ function PricingSection() {
           <h2 className="mt-3 font-display text-3xl font-bold text-slate-900 sm:text-4xl">
             Plans that pay for themselves
           </h2>
-          <p className="mt-3 text-lg text-slate-600">
-            One prevented error covers months of EquipCheck.
-          </p>
         </div>
+
+        {/* Value callout */}
+        <p className="mx-auto mt-6 max-w-xl rounded-lg bg-blue-50 px-6 py-3 text-center text-lg font-semibold text-blue-800">
+          One prevented error covers months of EquipCheck.
+        </p>
 
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {plans.map((plan) => (
@@ -1434,9 +1452,15 @@ function PricingSection() {
                 ))}
               </ul>
 
+              {plan.trial && (
+                <p className="mt-4 text-center text-xs font-medium text-blue-600">
+                  14-day free trial &mdash; no charge until day 15
+                </p>
+              )}
+
               <Button
                 asChild
-                className={`mt-6 w-full ${
+                className={`mt-4 w-full ${
                   plan.popular
                     ? "bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-[0_1px_3px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(37,99,235,0.35)]"
                     : "border-slate-300 bg-transparent text-blue-600 hover:border-blue-600 hover:bg-blue-50"
@@ -1451,14 +1475,11 @@ function PricingSection() {
           ))}
         </div>
 
-        <p className="mt-10 text-center text-sm text-slate-500">
-          All plans include: 14-day free trial on paid plans &bull; No data retention &bull; Cancel anytime
-        </p>
-
-        {/* Enterprise callout */}
+        {/* Enterprise banner */}
         <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl bg-[#1E293B] p-6 sm:flex-row">
           <div>
             <h3 className="font-display text-lg font-bold text-white">Enterprise</h3>
+            <p className="text-sm font-medium text-slate-300">Custom pricing</p>
             <p className="mt-1 text-sm text-slate-400">
               Custom rules, dedicated onboarding, SLA, and volume pricing for teams of 10+.
             </p>
@@ -1468,11 +1489,15 @@ function PricingSection() {
             asChild
             className="shrink-0 border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10"
           >
-            <a href="mailto:sales@equipcheck.app">
+            <a href="mailto:support@equipcheck.app?subject=EquipCheck%20Enterprise%20Inquiry&body=Hi%20Zach%2C%0A%0AI'm%20interested%20in%20learning%20more%20about%20EquipCheck%20Enterprise%20for%20my%20team.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0ACurrent%20validation%20volume%3A%20%0A%0AThanks!">
               Contact Sales <ArrowRight className="ml-1.5 h-4 w-4" />
             </a>
           </Button>
         </div>
+
+        <p className="mt-10 text-center text-sm text-slate-500">
+          All plans include: Zero File Retention &bull; No long-term contracts &bull; Cancel anytime &bull; Free plan always available
+        </p>
       </div>
     </section>
   );
@@ -1483,13 +1508,13 @@ function PricingSection() {
 const securityPoints = [
   {
     icon: Lock,
-    title: "Zero Data Retention",
-    body: "Your files are processed in memory and permanently deleted after validation. They\u2019re never written to disk, never backed up, and never accessible to our team. When you close the page, it\u2019s gone.",
+    title: "Zero File Retention",
+    body: "Your files are processed and permanently deleted. Nothing is stored on our servers.",
   },
   {
     icon: ShieldCheck,
-    title: "End-to-End Encryption",
-    body: "Files are encrypted during upload, encrypted during processing, and encrypted during delivery. TLS 1.3 in transit, AES-256 at rest for the seconds they exist in our system.",
+    title: "Encrypted in Transit",
+    body: "All data is encrypted during upload and delivery using TLS 1.3. Your validation history is stored in a secured database with row-level access controls \u2014 only you can see your data.",
   },
   {
     icon: FileX,
@@ -1513,12 +1538,12 @@ function SecuritySection() {
           Your Data. Your Business.
         </p>
         <h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">
-          We validate your files. We never keep them.
+          Your data stays yours. Always.
         </h2>
         <p className="mt-4 max-w-2xl text-lg text-slate-400">
           Your equipment specs and material lists are proprietary business data.
-          We built EquipCheck with a zero-retention architecture because your data
-          is your competitive advantage &mdash; not ours.
+          We process files in memory, delete them immediately after validation,
+          and never train AI on your data. Your validation history is accessible only to you.
         </p>
 
         <div className="mt-14 grid gap-6 md:grid-cols-3">
@@ -1537,8 +1562,8 @@ function SecuritySection() {
         </div>
 
         <p className="mt-10 text-center text-xs text-slate-600">
-          The only data we store is your account information (email, plan, usage count).
-          Your equipment files never touch our database.
+          Your uploaded files are processed in memory and never written to disk.
+          Validation results are saved to your account for history access.
         </p>
       </div>
     </section>
@@ -1607,7 +1632,7 @@ function Footer() {
           </h4>
           <nav className="mt-4 flex flex-col gap-2">
             <a href="mailto:contact@equipcheck.app" className="text-sm text-slate-500 hover:text-white">contact@equipcheck.app</a>
-            <a href="mailto:sales@equipcheck.app" className="text-sm text-slate-500 hover:text-white">sales@equipcheck.app</a>
+            <a href="mailto:support@equipcheck.app?subject=EquipCheck%20Enterprise%20Inquiry&body=Hi%20Zach%2C%0A%0AI'm%20interested%20in%20learning%20more%20about%20EquipCheck%20Enterprise%20for%20my%20team.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0ACurrent%20validation%20volume%3A%20%0A%0AThanks!" className="text-sm text-slate-500 hover:text-white">sales@equipcheck.app</a>
             <a href="#security" className="text-sm text-slate-500 hover:text-white">Security</a>
           </nav>
         </div>

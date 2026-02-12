@@ -92,12 +92,14 @@ export async function POST(request: Request) {
       result: validationResult,
       sessionId: session_id,
       isDemo: true,
-      source: source ?? null,
+      source: source ?? "sample_demo",
       processingTimeMs,
       utmSource: utm_source,
       utmMedium: utm_medium,
       utmCampaign: utm_campaign,
-    }).catch(() => {});
+      plan: "free",
+      pipelineDepth: "basic",
+    }).catch((err) => console.error("[EquipCheck] Failed to log demo validation:", err));
 
     return NextResponse.json({
       success: true,

@@ -5,6 +5,7 @@ export interface Profile {
   plan: "free" | "professional" | "business";
   validations_this_month: number;
   validation_reset_date: string | null;
+  trial_end: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -42,6 +43,8 @@ export interface ValidationMatch {
   notes: string;
   confidence?: "HIGH" | "MEDIUM" | "LOW";
   severity?: "CRITICAL" | "MODERATE" | "LOW" | null;
+  verified?: boolean;
+  verificationReasoning?: string;
 }
 
 export interface ValidationMismatch {
@@ -52,6 +55,8 @@ export interface ValidationMismatch {
   spec_value: string;
   confidence?: "HIGH" | "MEDIUM" | "LOW";
   severity?: "CRITICAL" | "MODERATE" | "LOW" | null;
+  verified?: boolean;
+  verificationReasoning?: string;
 }
 
 export interface MissingItem {
@@ -60,6 +65,8 @@ export interface MissingItem {
   notes: string;
   confidence?: "HIGH" | "MEDIUM" | "LOW";
   severity?: "CRITICAL" | "MODERATE" | "LOW" | null;
+  verified?: boolean;
+  verificationReasoning?: string;
 }
 
 export interface ExtraItem {
@@ -94,7 +101,7 @@ export interface ValidationResult {
   summary: ValidationSummary;
   // Dual-pass enhancement fields (optional for backward compat)
   industry_detected?: string;
-  verification_status?: "CONFIRMED" | "CORRECTIONS_MADE" | "SINGLE_PASS" | "VERIFICATION_FAILED";
+  verification_status?: "CONFIRMED" | "CORRECTIONS_MADE" | "SINGLE_PASS" | "VERIFICATION_FAILED" | "TARGETED_VERIFICATION";
   overall_confidence?: "HIGH" | "MEDIUM" | "LOW";
   value_estimate?: ValueEstimate;
 }
@@ -112,9 +119,9 @@ export const PLAN_SPEC_LIMITS: Record<Profile["plan"], number> = {
 };
 
 export const PLAN_FEATURES = {
-  free: { dualPass: false, pdfExport: false, specs: 1 },
-  professional: { dualPass: true, pdfExport: true, specs: Infinity },
-  business: { dualPass: true, pdfExport: true, specs: Infinity },
+  free: { dualPass: false, pdfExport: false, specs: 1, pipelineDepth: "basic" as const },
+  professional: { dualPass: true, pdfExport: true, specs: Infinity, pipelineDepth: "verified" as const },
+  business: { dualPass: true, pdfExport: true, specs: Infinity, pipelineDepth: "verified" as const },
 } as const;
 
 export interface ValidationFlag {
@@ -157,3 +164,103 @@ export const FLAG_REASONS = [
   { value: "duplicated" as const, label: "Item is duplicated" },
   { value: "other" as const, label: "Other" },
 ] as const;
+
+/* ─── Stage 1: Parser Types ─── */
+
+export interface ParsedItem {
+  rowNumber: number;
+  partNumber: string | null;
+  partNumberRaw: string | null;
+  description: string;
+  descriptionRaw: string;
+  quantity: number;
+  unit: string | null;
+  rawText: string;
+  confidence: number;
+}
+
+export interface ColumnMapping {
+  partNumber: string | null;
+  description: string | null;
+  quantity: string | null;
+  unit: string | null;
+}
+
+export interface ParseResult {
+  items: ParsedItem[];
+  headers: string[];
+  columnMapping: ColumnMapping;
+  warnings: string[];
+  totalRows: number;
+  parsedRows: number;
+}
+
+/* ─── Stage 2: Comparator Types ─── */
+
+export type ComparisonStatus =
+  | "MATCH"
+  | "PARTIAL_MATCH"
+  | "NO_MATCH"
+  | "QUANTITY_MISMATCH"
+  | "EXTRA";
+
+export interface ComparisonItem {
+  equipmentIndex: number;
+  specIndex: number | null;
+  status: ComparisonStatus;
+  confidence: number;
+  differences: string[];
+  notes: string;
+  severity: "CRITICAL" | "MODERATE" | "LOW" | null;
+  matchBasis: "PART_NUMBER" | "DESCRIPTION" | "INFERRED" | null;
+}
+
+export interface PipelineMissingItem {
+  specIndex: number;
+  notes: string;
+  severity: "CRITICAL" | "MODERATE" | "LOW" | null;
+}
+
+export interface ComparisonResult {
+  industryDetected: string;
+  items: ComparisonItem[];
+  missingFromEquipment: PipelineMissingItem[];
+  summary: {
+    matches: number;
+    partialMatches: number;
+    noMatches: number;
+    quantityMismatches: number;
+    extras: number;
+    missing: number;
+  };
+}
+
+/* ─── Stage 3: Verifier Types ─── */
+
+export type VerificationDecision =
+  | "CONFIRMED_MISMATCH"
+  | "RECLASSIFIED_MATCH"
+  | "NEEDS_HUMAN_REVIEW";
+
+export interface VerifiedItem {
+  originalIndex: number;
+  decision: VerificationDecision;
+  confidence: number;
+  reasoning: string;
+  revisedSeverity: "CRITICAL" | "MODERATE" | "LOW" | null;
+}
+
+export interface VerificationResult {
+  verifiedItems: VerifiedItem[];
+  verificationType: "TARGETED";
+  itemsChecked: number;
+  reclassifiedCount: number;
+}
+
+/* ─── Pipeline Options ─── */
+
+export interface PipelineOptions {
+  verify?: boolean;
+  maxChunkSize?: number;
+  maxConcurrency?: number;
+}

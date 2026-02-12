@@ -63,7 +63,7 @@ export async function POST(request: Request) {
   }
 
   // Guard against oversized data exceeding AI token limits
-  const MAX_ITEMS = 200;
+  const MAX_ITEMS = 1000;
   if (Array.isArray(equipmentData) && equipmentData.length > MAX_ITEMS) {
     return NextResponse.json(
       { error: `Equipment list too large (${equipmentData.length} items). Maximum is ${MAX_ITEMS} items per validation.` },
@@ -100,6 +100,7 @@ export async function POST(request: Request) {
     if (dbError) throw dbError;
 
     // Fire-and-forget logging (metadata only)
+    const pipelineDepth = PLAN_FEATURES[plan].pipelineDepth;
     logValidation({
       result: validationResult,
       userId: user.id,
@@ -109,7 +110,9 @@ export async function POST(request: Request) {
       utmSource: utm_source,
       utmMedium: utm_medium,
       utmCampaign: utm_campaign,
-    }).catch(() => {});
+      plan,
+      pipelineDepth,
+    }).catch((err) => console.error("[EquipCheck] Failed to log validation:", err));
 
     await supabase
       .from("profiles")
@@ -142,6 +145,16 @@ export async function POST(request: Request) {
           code: "RATE_LIMITED",
         },
         { status: 429 }
+      );
+    }
+
+    if (message === "AI_PARSE_ERROR") {
+      return NextResponse.json(
+        {
+          error: "We had trouble processing the AI results. Please try again.",
+          code: "PARSE_ERROR",
+        },
+        { status: 500 }
       );
     }
 

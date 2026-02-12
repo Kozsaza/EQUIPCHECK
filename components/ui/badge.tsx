@@ -20,6 +20,8 @@ const badgeVariants = cva(
           "bg-green-50 text-green-800 border-green-200",
         warning:
           "bg-amber-50 text-amber-800 border-amber-200",
+        review:
+          "bg-blue-50 text-blue-800 border-blue-200",
         ghost: "",
         link: "text-accent underline-offset-4 [a&]:hover:underline",
       },

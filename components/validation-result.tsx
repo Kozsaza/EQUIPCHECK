@@ -13,15 +13,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, XCircle, AlertTriangle, HelpCircle, Flag } from "lucide-react";
+import { CheckCircle2, XCircle, AlertTriangle, HelpCircle, Flag, ShieldCheck } from "lucide-react";
 import { FlagModal } from "@/components/flag-modal";
 
 interface ValidationResultProps {
   result: ValidationResult;
   validationId?: string;
+  userPlan?: "free" | "professional" | "business";
 }
 
-export function ValidationResultView({ result, validationId }: ValidationResultProps) {
+export function ValidationResultView({ result, validationId, userPlan }: ValidationResultProps) {
   const { summary, matches, mismatches, missing_from_equipment, extra_in_equipment } =
     result;
 
@@ -88,11 +89,13 @@ export function ValidationResultView({ result, validationId }: ValidationResultP
           <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
           <div className="flex-1 text-sm">
             <span className="font-medium">
-              {result.verification_status === "CONFIRMED"
-                ? "Dual-Pass Verification Complete"
-                : result.verification_status === "CORRECTIONS_MADE"
-                  ? "Dual-Pass Verification Complete (corrections applied)"
-                  : "Verification Status: " + result.verification_status}
+              {result.verification_status === "TARGETED_VERIFICATION"
+                ? "Targeted Verification Complete"
+                : result.verification_status === "CONFIRMED"
+                  ? "Dual-Pass Verification Complete"
+                  : result.verification_status === "CORRECTIONS_MADE"
+                    ? "Dual-Pass Verification Complete (corrections applied)"
+                    : "Verification Status: " + result.verification_status}
             </span>
             <span className="mx-2 text-muted-foreground">&middot;</span>
             <span className="text-muted-foreground">
@@ -199,9 +202,24 @@ export function ValidationResultView({ result, validationId }: ValidationResultP
                           <TableCell className="font-medium">{m.equipment_item}</TableCell>
                           <TableCell>{m.spec_item}</TableCell>
                           <TableCell>
-                            <Badge variant={m.match_type === "exact" ? "success" : "warning"}>
-                              {m.match_type}
-                            </Badge>
+                            <span className="inline-flex items-center gap-1">
+                              <Badge variant={
+                                m.match_type === "exact"
+                                  ? "success"
+                                  : m.verificationReasoning
+                                    ? "review"
+                                    : "warning"
+                              }>
+                                {m.match_type === "exact"
+                                  ? "exact"
+                                  : m.verificationReasoning
+                                    ? "needs review"
+                                    : "partial"}
+                              </Badge>
+                              {m.verified && (
+                                <span title="AI-verified"><ShieldCheck className="h-3.5 w-3.5 text-success" /></span>
+                              )}
+                            </span>
                           </TableCell>
                           <TableCell>
                             {m.quantity_match ? (
@@ -213,7 +231,11 @@ export function ValidationResultView({ result, validationId }: ValidationResultP
                             )}
                           </TableCell>
                           <TableCell className="text-sm text-muted-foreground">
-                            {m.notes}
+                            {m.verificationReasoning ? (
+                              <span className="text-blue-600">{m.verificationReasoning}</span>
+                            ) : (
+                              m.notes
+                            )}
                           </TableCell>
                           <TableCell>
                             <FlagButton status={m.match_type === "exact" ? "MATCH" : "REVIEW"} spec={m.spec_item} equip={m.equipment_item} />
@@ -254,7 +276,14 @@ export function ValidationResultView({ result, validationId }: ValidationResultP
                         <TableRow key={i}>
                           <TableCell className="font-medium">{m.equipment_item}</TableCell>
                           <TableCell>{m.spec_item}</TableCell>
-                          <TableCell className="text-destructive">{m.issue}</TableCell>
+                          <TableCell className="text-destructive">
+                            <span className="inline-flex items-center gap-1">
+                              {m.issue}
+                              {m.verified && (
+                                <span title="AI-verified"><ShieldCheck className="h-3.5 w-3.5 shrink-0 text-success" /></span>
+                              )}
+                            </span>
+                          </TableCell>
                           <TableCell className="font-mono text-xs">{m.equipment_value}</TableCell>
                           <TableCell className="font-mono text-xs">{m.spec_value}</TableCell>
                           <TableCell>
@@ -352,6 +381,22 @@ export function ValidationResultView({ result, validationId }: ValidationResultP
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Upsell for free plan users */}
+      {userPlan === "free" && (mismatches.length > 0 || missing_from_equipment.length > 0) && (
+        <div className="rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4">
+          <p className="text-sm text-blue-800">
+            <strong>Want higher accuracy?</strong> Professional and Business plans include
+            3-stage verified matching that re-examines flagged items to catch false positives.
+          </p>
+          <a
+            href="/dashboard/billing"
+            className="mt-1 inline-block text-sm font-medium text-blue-600 hover:underline"
+          >
+            Start your 14-day free trial &rarr;
+          </a>
+        </div>
+      )}
 
       {/* Feedback banner */}
       <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50/50 px-4 py-3">

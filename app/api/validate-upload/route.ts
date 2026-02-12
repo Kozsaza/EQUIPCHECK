@@ -32,7 +32,7 @@ function checkRateLimit(ip: string): boolean {
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const MAX_ROWS = 200;
+const MAX_ROWS = 1000;
 
 export async function POST(request: Request) {
   const forwarded = request.headers.get("x-forwarded-for");
@@ -122,13 +122,13 @@ export async function POST(request: Request) {
     logValidation({
       result: validationResult,
       sessionId,
-      isDemo: false,
+      isDemo: true,
       source: source ?? "upload_demo",
       processingTimeMs,
       utmSource: utmSource,
       utmMedium: utmMedium,
       utmCampaign: utmCampaign,
-    }).catch(() => {});
+    }).catch((err) => console.error("[EquipCheck] Failed to log upload demo validation:", err));
 
     return NextResponse.json({
       success: true,
@@ -156,6 +156,16 @@ export async function POST(request: Request) {
           code: "RATE_LIMITED",
         },
         { status: 429 }
+      );
+    }
+
+    if (message === "AI_PARSE_ERROR") {
+      return NextResponse.json(
+        {
+          error: "We had trouble processing the AI results. Please try again.",
+          code: "PARSE_ERROR",
+        },
+        { status: 500 }
       );
     }
 

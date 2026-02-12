@@ -33,12 +33,24 @@ export async function POST(request: Request) {
         const plan = session.metadata?.plan;
 
         if (userId && plan) {
+          // Retrieve subscription to check trial status
+          let trialEnd: string | null = null;
+          if (session.subscription) {
+            const subscription = await getStripe().subscriptions.retrieve(
+              session.subscription as string
+            );
+            if (subscription.status === "trialing" && subscription.trial_end) {
+              trialEnd = new Date(subscription.trial_end * 1000).toISOString();
+            }
+          }
+
           const { error } = await admin
             .from("profiles")
             .update({
               plan,
               stripe_customer_id: session.customer as string,
               validations_this_month: 0,
+              trial_end: trialEnd,
               updated_at: new Date().toISOString(),
             })
             .eq("id", userId);
@@ -70,13 +82,21 @@ export async function POST(request: Request) {
             // Subscription no longer active — downgrade to free
             const { error } = await admin
               .from("profiles")
-              .update({ plan: "free", updated_at: new Date().toISOString() })
+              .update({
+                plan: "free",
+                trial_end: null,
+                updated_at: new Date().toISOString(),
+              })
               .eq("id", profile.id);
 
             if (error) console.error("Failed to downgrade plan:", error);
           } else {
             // Active subscription — sync plan from current price ID
             const priceId = subscription.items.data[0]?.price?.id;
+            const trialEnd = subscription.trial_end
+              ? new Date(subscription.trial_end * 1000).toISOString()
+              : null;
+
             if (priceId) {
               const newPlan = planFromPriceId(priceId);
               if (newPlan && newPlan !== profile.plan) {
@@ -85,11 +105,23 @@ export async function POST(request: Request) {
                   .update({
                     plan: newPlan,
                     validations_this_month: 0,
+                    trial_end: trialEnd,
                     updated_at: new Date().toISOString(),
                   })
                   .eq("id", profile.id);
 
                 if (error) console.error("Failed to update plan:", error);
+              } else {
+                // Same plan, just update trial status
+                const { error } = await admin
+                  .from("profiles")
+                  .update({
+                    trial_end: trialEnd,
+                    updated_at: new Date().toISOString(),
+                  })
+                  .eq("id", profile.id);
+
+                if (error) console.error("Failed to update trial status:", error);
               }
             }
           }
@@ -103,7 +135,11 @@ export async function POST(request: Request) {
 
         const { error } = await admin
           .from("profiles")
-          .update({ plan: "free", updated_at: new Date().toISOString() })
+          .update({
+            plan: "free",
+            trial_end: null,
+            updated_at: new Date().toISOString(),
+          })
           .eq("stripe_customer_id", customerId);
 
         if (error) console.error("Failed to downgrade on deletion:", error);

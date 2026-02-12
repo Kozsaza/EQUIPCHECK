@@ -11,6 +11,8 @@ interface LogParams {
   utmSource?: string | null;
   utmMedium?: string | null;
   utmCampaign?: string | null;
+  plan?: string | null;
+  pipelineDepth?: string | null;
 }
 
 /**
@@ -27,12 +29,14 @@ export async function logValidation({
   utmSource,
   utmMedium,
   utmCampaign,
+  plan,
+  pipelineDepth,
 }: LogParams): Promise<void> {
   const criticalCount =
     (result.mismatches?.filter((m) => m.severity === "CRITICAL").length ?? 0) +
     (result.missing_from_equipment?.filter((m) => m.severity === "CRITICAL").length ?? 0);
 
-  await getSupabaseAdmin().from("validation_logs").insert({
+  const { error } = await getSupabaseAdmin().from("validation_logs").insert({
     user_id: userId ?? null,
     session_id: sessionId ?? null,
     industry_detected: result.industry_detected ?? null,
@@ -50,5 +54,11 @@ export async function logValidation({
     utm_source: utmSource ?? null,
     utm_medium: utmMedium ?? null,
     utm_campaign: utmCampaign ?? null,
+    plan: plan ?? null,
+    pipeline_depth: pipelineDepth ?? null,
   });
+
+  if (error) {
+    console.error("[EquipCheck] Failed to insert validation_log:", error.message);
+  }
 }

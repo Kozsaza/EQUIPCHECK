@@ -1,139 +1,160 @@
 # EquipCheck
 
-AI-powered equipment validation for field service teams.
+AI-powered equipment validation for contractors and field service teams.
 
-Upload your equipment list + master spec → Get a validation report in 2 minutes.
+Upload any equipment list against any master spec. Get a validated report in under 2 minutes — matches, mismatches, missing items, and quantity errors — across electrical, HVAC, security, and construction.
 
-## Quick Start
+## How It Works
 
-### Prerequisites
-- Node.js 18+
-- Supabase account (free tier works)
-- Google AI Studio account (for Gemini API)
-- Stripe account (for payments)
+EquipCheck uses a 3-stage validation pipeline:
 
-### 1. Clone and Install
+1. **Deterministic Parsing** — Normalizes part numbers, expands industry abbreviations, and structures both documents. Zero AI, zero hallucination risk.
+2. **AI Comparison** — Gemini compares every line item using built-in industry knowledge (NEC codes, ASHRAE terms, security specs, construction hardware). Large files are automatically chunked and processed in parallel.
+3. **Verification Pass** *(Professional & Business)* — A second AI pass re-examines flagged items to catch false positives before you see them.
 
-```bash
-# If starting fresh with Next.js:
-npx create-next-app@latest equipcheck --typescript --tailwind --eslint --app
+Free plan users get Stages 1 + 2 (pipeline depth: `basic`). Professional and Business plans get all 3 stages (pipeline depth: `verified`).
 
-# Copy the starter files from this package into your project
-# Then install dependencies:
-npm install
-```
+## Zero File Retention
 
-### 2. Set Up Supabase
-
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to SQL Editor and run the contents of `schema.sql`
-3. Copy your project URL and keys from Settings > API
-
-### 3. Set Up Gemini API
-
-1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Create an API key
-3. Add to your `.env.local`
-
-### 4. Set Up Stripe
-
-1. Create account at [stripe.com](https://stripe.com)
-2. Create two products:
-   - **Starter**: $99/month
-   - **Pro**: $199/month
-3. Copy the price IDs to `.env.local`
-4. Set up webhook at `/api/webhooks/stripe`
-   - Events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
-
-### 5. Configure Environment
-
-```bash
-cp .env.example .env.local
-# Edit .env.local with your values
-```
-
-### 6. Run Development Server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
-### 7. Deploy to Vercel
-
-```bash
-npm install -g vercel
-vercel
-```
-
-Add all environment variables in Vercel dashboard.
-
----
-
-## Project Structure
-
-```
-equipcheck/
-├── CLAUDE.md                 # Build instructions for Claude Code
-├── CUSTOMER_DISCOVERY_GTM.md # Customer discovery & go-to-market plan
-├── schema.sql                # Database schema for Supabase
-├── .env.example              # Environment variables template
-├── package.json              # Dependencies
-└── README.md                 # This file
-```
-
-## Build Order
-
-Follow the weekly plan in `CLAUDE.md`:
-
-1. **Week 1**: Auth + basic project setup
-2. **Week 2**: File upload + spec library
-3. **Week 3**: AI validation engine
-4. **Week 4**: Results display + PDF export
-5. **Week 5**: Billing + Stripe integration
-6. **Week 6**: Landing page + launch prep
-
-## Customer Discovery
-
-Before and during build, run customer discovery. See `CUSTOMER_DISCOVERY_GTM.md` for:
-
-- Who to talk to
-- Outreach scripts
-- Discovery call questions
-- Beta launch plan
-- Paid conversion strategy
+Uploaded files are processed entirely in memory and never written to disk or cloud storage. EquipCheck does not use the Gemini File API — all AI calls send structured text, not file uploads. No files are retained on Supabase Storage, AWS S3, or any other file service. Validation results (structured JSON, not raw files) are saved to the user's account for history access and can be deleted at any time.
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | Next.js 14 (App Router) |
-| Styling | Tailwind CSS + shadcn/ui |
-| Database | Supabase (Postgres) |
-| Auth | Supabase Auth |
-| AI | Google Gemini API |
-| File Parsing | Papa Parse + SheetJS |
-| PDF | @react-pdf/renderer |
-| Payments | Stripe |
-| Hosting | Vercel |
+| Frontend | Next.js 16 (App Router, Turbopack) |
+| Styling | Tailwind CSS v4 + shadcn/ui |
+| Database | Supabase (Postgres + Row Level Security) |
+| Auth | Supabase Auth (SSR) |
+| AI | Google Gemini 2.0 Flash |
+| File Parsing | Papa Parse (CSV) + SheetJS (Excel) |
+| PDF Export | @react-pdf/renderer |
+| Payments | Stripe (Checkout + Billing Portal + 14-day trials) |
 
 ## Pricing
 
-| Plan | Price | Validations/Month |
-|------|-------|-------------------|
-| Free | $0 | 3 |
-| Starter | $99/mo | 50 |
-| Pro | $199/mo | Unlimited |
+| Plan | Price | Validations/Mo | Pipeline | Trial | Key Features |
+|------|-------|----------------|----------|-------|--------------|
+| Free | $0 | 3 | Basic (2-stage) | — | AI matching, 1 saved spec, CSV & Excel |
+| Professional | $149/mo | 75 | Verified (3-stage) | 14 days | PDF export, unlimited specs, email support |
+| Business | $299/mo | Unlimited | Verified (3-stage) | 14 days | Team seats (5), custom matching rules, priority support |
+| Enterprise | Custom | Unlimited | Verified (3-stage) | — | API access, dedicated onboarding, SLA, volume pricing |
 
----
+## Project Structure
 
-## Legal Note
+```
+app/
+├── page.tsx                    # Landing page with live demo
+├── login/ signup/              # Auth pages
+├── dashboard/
+│   ├── page.tsx                # Dashboard home
+│   ├── validate/               # New validation flow
+│   ├── specs/                  # Spec library (list, new, view)
+│   ├── history/                # Validation history
+│   ├── billing/                # Subscription management
+│   └── settings/               # Account settings
+└── api/
+    ├── validate/               # Authenticated validation endpoint
+    ├── validate-upload/         # Public demo validation
+    ├── demo-validate/           # Sample data demo
+    ├── create-checkout/         # Stripe checkout (with trial support)
+    ├── create-billing-portal/   # Stripe billing portal
+    └── webhooks/stripe/         # Stripe webhook handler
 
-This project must be built **clean-room** — no code, data, or proprietary processes from your employer. Build on personal equipment, use personal accounts, target a different market segment.
+lib/
+├── pipeline/
+│   ├── parser.ts               # Stage 1: Deterministic parsing & normalization
+│   ├── comparator.ts           # Stage 2: AI comparison with chunking
+│   ├── verifier.ts             # Stage 3: Targeted verification
+│   ├── industry-knowledge.ts   # Abbreviation equivalencies & critical distinctions
+│   └── index.ts                # Pipeline orchestrator
+├── gemini.ts                   # Gemini API client with retry logic
+├── stripe.ts                   # Central plan config + Stripe helpers
+├── supabase/                   # Supabase client (browser + server + admin)
+└── parsers/                    # File parsing (CSV, Excel, text, PDF)
 
----
+components/
+├── validation-result.tsx       # Results display with verification badges + upsell
+├── pdf-report.tsx              # PDF export (Professional & Business)
+├── file-upload.tsx             # Drag-drop file upload
+├── flag-modal.tsx              # User feedback/flagging
+└── ui/                         # shadcn/ui components
+
+types/
+└── index.ts                    # All TypeScript types (pipeline, validation, plans)
+```
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- Supabase account
+- Google AI Studio API key (Gemini)
+- Stripe account (for payments)
+
+### Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Copy environment template and fill in your values
+cp .env.example .env.local
+
+# Run development server
+npm run dev
+```
+
+### Environment Variables
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+GEMINI_API_KEY=
+
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_PROFESSIONAL_PRICE_ID=
+STRIPE_BUSINESS_PRICE_ID=
+
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+### Supabase Setup
+
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Run the contents of `schema.sql` in the SQL Editor
+3. Add a `trial_end` column to the profiles table:
+   ```sql
+   ALTER TABLE public.profiles ADD COLUMN trial_end timestamp with time zone;
+   ```
+4. Copy your project URL and keys from Settings > API
+
+### Stripe Setup
+
+1. Create two subscription products:
+   - **Professional**: $149/month
+   - **Business**: $299/month
+2. Copy the price IDs to `.env.local`
+3. Set up a webhook pointing to `/api/webhooks/stripe` with events:
+   - `checkout.session.completed`
+   - `customer.subscription.updated`
+   - `customer.subscription.deleted`
+4. Both paid plans include a 14-day free trial — Stripe handles the billing delay automatically
+
+## Supported Industries
+
+- **Electrical** — Panel schedules, material orders, wire/breaker specs
+- **HVAC** — Mechanical schedules, equipment submittals, tonnage/SEER verification
+- **Security** — Camera surveys, NVR capacity, cable quantities
+- **Construction** — Door hardware schedules, finish specs, ADA compliance
+
+The AI adapts to your terminology automatically — no industry-specific configuration needed.
 
 ## Support
 
-Questions? Open an issue or contact [your email].
+Questions? Contact [support@equipcheck.app](mailto:support@equipcheck.app)

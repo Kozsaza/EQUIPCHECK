@@ -43,14 +43,23 @@ export async function POST(request: Request) {
       .eq("id", user.id);
   }
 
-  const priceId = PLANS[plan].priceId;
+  const priceId = PLANS[plan].stripePriceId;
+  if (!priceId) {
+    return NextResponse.json({ error: "Plan not configured" }, { status: 500 });
+  }
+
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const trialDays = PLANS[plan].trialDays;
 
   const session = await getStripe().checkout.sessions.create({
     customer: customerId,
     mode: "subscription",
+    payment_method_types: ["card"],
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${appUrl}/dashboard/billing?success=true`,
+    ...(trialDays > 0
+      ? { subscription_data: { trial_period_days: trialDays } }
+      : {}),
+    success_url: `${appUrl}/dashboard/billing?success=true${trialDays > 0 ? "&trial=true" : ""}`,
     cancel_url: `${appUrl}/dashboard/billing?canceled=true`,
     metadata: { supabase_user_id: user.id, plan },
   });
