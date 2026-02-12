@@ -307,6 +307,8 @@ function BillingContent() {
         </div>
         <a
           href="mailto:support@equipcheck.app?subject=EquipCheck%20Enterprise%20Inquiry&body=Hi%20Zach%2C%0A%0AI%27m%20interested%20in%20learning%20more%20about%20EquipCheck%20Enterprise%20for%20my%20team.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0ACurrent%20validation%20volume%3A%20%0A%0AThanks!"
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg border border-white/30 bg-transparent px-4 py-2 text-sm font-medium text-white transition-all hover:border-white/50 hover:bg-white/10"
         >
           Contact Sales <ArrowRight className="ml-1.5 h-4 w-4" />
