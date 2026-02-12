@@ -297,26 +297,21 @@ function BillingContent() {
       </div>
 
       {/* Enterprise banner */}
-      <Card className="bg-[#1E293B] text-white">
-        <CardContent className="flex flex-col items-center justify-between gap-4 pt-6 sm:flex-row">
-          <div>
-            <h3 className="text-lg font-bold">Enterprise</h3>
-            <p className="text-sm text-slate-300">Custom pricing</p>
-            <p className="mt-1 text-sm text-slate-400">
-              Custom rules, dedicated onboarding, SLA, and volume pricing for teams of 10+.
-            </p>
-          </div>
-          <Button
-            variant="outline"
-            asChild
-            className="shrink-0 border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10"
-          >
-            <a href="mailto:support@equipcheck.app?subject=EquipCheck%20Enterprise%20Inquiry&body=Hi%20Zach%2C%0A%0AI'm%20interested%20in%20learning%20more%20about%20EquipCheck%20Enterprise%20for%20my%20team.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0ACurrent%20validation%20volume%3A%20%0A%0AThanks!">
-              Contact Sales <ArrowRight className="ml-1.5 h-4 w-4" />
-            </a>
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col items-center justify-between gap-4 rounded-xl bg-[#1E293B] p-6 sm:flex-row">
+        <div>
+          <h3 className="text-lg font-bold text-white">Enterprise</h3>
+          <p className="text-sm font-medium text-slate-300">Custom pricing</p>
+          <p className="mt-1 text-sm text-slate-400">
+            Custom rules, dedicated onboarding, SLA, and volume pricing for teams of 10+.
+          </p>
+        </div>
+        <a
+          href="mailto:support@equipcheck.app?subject=EquipCheck%20Enterprise%20Inquiry&body=Hi%20Zach%2C%0A%0AI%27m%20interested%20in%20learning%20more%20about%20EquipCheck%20Enterprise%20for%20my%20team.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0ACurrent%20validation%20volume%3A%20%0A%0AThanks!"
+          className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg border border-white/30 bg-transparent px-4 py-2 text-sm font-medium text-white transition-all hover:border-white/50 hover:bg-white/10"
+        >
+          Contact Sales <ArrowRight className="ml-1.5 h-4 w-4" />
+        </a>
+      </div>
     </div>
   );
 }
